@@ -36,7 +36,7 @@ class AuthController extends Validator {
     const { userId } = req.params
 
     const user = await User.findByPk(userId)
-    if (!user) throw new CustomError(400, 'error.idNotSigned', '此ID無註冊帳號')
+    if (!user) throw new CustomError(400, 'error.autoSignInFail', '自動登入失敗')
 
     const refreshToken = encrypt.signRefreshToken(userId)
     await User.update({ refreshToken }, { where: { id: userId } })
@@ -44,6 +44,19 @@ class AuthController extends Validator {
 
     const accessToken = encrypt.signAccessToken(userId)
     res.status(200).json({ message: '自動登入成功', accessToken })
+  })
+
+  signIn = asyncError(async (req, res, next) => {
+    const { user } = req
+
+    if (!user) throw new CustomError(401, 'error.pwdSignInFail', '密碼登入失敗')
+
+    const refreshToken = encrypt.signRefreshToken(user.id)
+    await User.update({ refreshToken }, { where: { id: user.id } })
+    cookie.store(res, refreshToken)
+
+    const accessToken = encrypt.signAccessToken(user.id)
+    res.status(200).json({ message: '密碼登入成功', accessToken })
   })
 
   signUp = asyncError(async (req, res, next) => {

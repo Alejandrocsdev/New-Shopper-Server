@@ -11,6 +11,7 @@ const { pwdSignInAuth } = require('../config/passport')
 router.param('userId', checkId)
 
 router.post('/sign-in/auto/:userId', authController.autoSignIn)
+router.post('/sign-in/pwd', pwdSignInAuth, authController.signIn)
 router.post('/sign-up', authController.signUp)
 
 module.exports = router
