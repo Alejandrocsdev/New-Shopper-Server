@@ -26,7 +26,7 @@ const schema = (route) => {
       ? Joi.string().regex(/^09/).length(10).required()
       : Joi.forbidden(),
     isReset: v['isReset'].includes(route) 
-      ? Joi.boolean().default(false) 
+      ? Joi.boolean() 
       : Joi.forbidden(),
     otp: v['otp'].includes(route) 
       ? Joi.string().length(6).required() 

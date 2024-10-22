@@ -1,6 +1,7 @@
 // 引入加密相關模組
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
 
 // 引用客製化錯誤訊息模組
 const CustomError = require('../errors/CustomError')
@@ -97,6 +98,43 @@ class Encrypt {
       throw new CustomError(500, 'error.uniqueUsernameFail', '生成唯一帳號失敗 (Encrypt.uniqueUsername)')
     }
   }
+
+    // Email JWT
+    signEmailToken(id) {
+      const token = jwt.sign({ id: Number(id) }, process.env.EMAIL_SECRET, { expiresIn: '15m' })
+      return token
+    }
+  
+    // Access JWT
+    signAccessToken(id) {
+      const token = jwt.sign({ id: Number(id) }, process.env.AT_SECRET, { expiresIn: '15m' })
+      return token
+    }
+  
+    // Refresh JWT
+    signRefreshToken(id) {
+      const token = jwt.sign({ id: Number(id) }, process.env.RT_SECRET, { expiresIn: '7d' })
+      return token
+    }
+  
+    // 驗證 JWT
+    verifyToken(token, type) {
+      let secret
+      switch (type) {
+        case 'at':
+          secret = process.env.AT_SECRET
+          break
+        case 'rt':
+          secret = process.env.RT_SECRET
+          break
+        case 'email':
+          secret = process.env.EMAIL_SECRET
+          break
+      }
+  
+      const decoded = jwt.verify(token, secret)
+      return decoded
+    }
 }
 
 module.exports = new Encrypt()

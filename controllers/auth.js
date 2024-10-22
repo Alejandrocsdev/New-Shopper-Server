@@ -9,8 +9,7 @@ const Validator = require('../Validator')
 // 引用驗證模組
 const Joi = require('joi')
 // 引用 加密 模組
-const { encrypt } = require('../utils')
-// const { encrypt, cookie } = require('../utils')
+const { encrypt, cookie } = require('../utils')
 // 需驗證Body路由 (validate)
 const v = {
   phone: ['signUp'],
@@ -32,6 +31,20 @@ class AuthController extends Validator {
   constructor() {
     super(schema)
   }
+
+  autoSignIn = asyncError(async (req, res, next) => {
+    const { userId } = req.params
+
+    const user = await User.findByPk(userId)
+    if (!user) throw new CustomError(400, 'error.idNotSigned', '此ID無註冊帳號')
+
+    const refreshToken = encrypt.signRefreshToken(userId)
+    await User.update({ refreshToken }, { where: { id: userId } })
+    cookie.store(res, refreshToken)
+
+    const accessToken = encrypt.signAccessToken(userId)
+    res.status(200).json({ message: '自動登入成功', accessToken })
+  })
 
   signUp = asyncError(async (req, res, next) => {
     // 驗證請求主體

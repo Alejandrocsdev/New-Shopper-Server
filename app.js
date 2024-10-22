@@ -15,6 +15,8 @@ const corsOptions = {
   origin: frontUrl,
   credentials: true
 }
+// 引用 Passport 初始化模組
+const { passportInit } = require('./config/passport')
 // 引用路由模組
 const routes = require('./routes')
 // 引用自定義中間件(預設路由/全域錯誤)
