@@ -13,7 +13,7 @@ class Encrypt {
       const hashedData = await bcrypt.hash(data, salt)
       return hashedData
     } catch (err) {
-      throw new CustomError(500, 'hashFail', '雜湊失敗 (Encrypt.hash)')
+      throw new CustomError(500, 'encrypt.hashFail', '雜湊失敗 (Encrypt.hash)')
     }
   }
 
@@ -21,9 +21,11 @@ class Encrypt {
   async hashCompare(data, hashedData) {
     try {
       const isMatch = await bcrypt.compare(data, hashedData)
+      console.log('data', data)
+      console.log('hashedData', hashedData)
       return isMatch
     } catch (err) {
-      throw new CustomError(500, 'hashCompareFail', '雜湊比對失敗 (Encrypt.hashCompare)')
+      throw new CustomError(500, 'encrypt.hashCompareFail', '雜湊比對失敗 (Encrypt.hashCompare)')
     }
   }
 
@@ -33,7 +35,7 @@ class Encrypt {
       const secret = crypto.randomBytes(32).toString('hex')
       return secret
     } catch (err) {
-      throw new CustomError(500, 'secretGenerateFail', '密鑰生成失敗 (Encrypt.secret)')
+      throw new CustomError(500, 'encrypt.secretGenerateFail', '密鑰生成失敗 (Encrypt.secret)')
     }
   }
 
@@ -43,7 +45,7 @@ class Encrypt {
       const code = crypto.randomInt(100000, 1000000)
       return String(code)
     } catch (err) {
-      throw new CustomError(500, 'otpGenerateFail', '生成OTP失敗 (Encrypt.otp)')
+      throw new CustomError(500, 'encrypt.otpGenerateFail', '生成OTP失敗 (Encrypt.otp)')
     }
   }
 }

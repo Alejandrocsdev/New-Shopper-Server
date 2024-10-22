@@ -13,13 +13,13 @@ const BASE_API = `${process.env.TWSMS_API}?username=${username}&password=${passw
 // TwSMS 簡訊發送器
 async function twsms(data, type) {
   try {
-    if (!username) throw new CustomError(500, 'twsmsMissingUsr', '缺少 TwSMS 帳號')
-    if (!password) throw new CustomError(500, 'twsmsMissingPwd', '缺少 TwSMS 密碼')
+    if (!username) throw new CustomError(500, 'error.twsmsMissingUsr', '缺少 TwSMS 帳號')
+    if (!password) throw new CustomError(500, 'error.twsmsMissingPwd', '缺少 TwSMS 密碼')
 
     // 發送簡訊
     await axios.get(`${BASE_API}&mobile=${data.phone}&message=${smsMessage(data, type)}`)
   } catch (err) {
-    throw new CustomError(500, 'twsmsOtpSendFail', '簡訊OTP發送失敗 (TwSMS)')
+    throw new CustomError(500, 'error.twsmsOtpSendFail', '簡訊OTP發送失敗 (TwSMS)')
   }
 }
 

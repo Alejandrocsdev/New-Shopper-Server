@@ -23,14 +23,14 @@ const options = (data, type) => {
 // Twilio 簡訊發送器
 async function twilio(data, type) {
   try {
-    if (!accountPhone) throw new CustomError(500, 'twilioMissingPhone', '缺少 Twilio 電話號碼')
-    if (!accountSid) throw new CustomError(500, 'twilioMissingSid', '缺少 Twilio Account SID')
-    if (!authToken) throw new CustomError(500, 'twilioMissingToken', '缺少 Twilio Auth Token')
+    if (!accountPhone) throw new CustomError(500, 'error.twilioMissingPhone', '缺少 Twilio 電話號碼')
+    if (!accountSid) throw new CustomError(500, 'error.twilioMissingSid', '缺少 Twilio Account SID')
+    if (!authToken) throw new CustomError(500, 'error.twilioMissingToken', '缺少 Twilio Auth Token')
 
     // 發送簡訊
     await client.messages.create(options(data, type))
   } catch (err) {
-    throw new CustomError(500, 'twilioOtpSendFail', '簡訊OTP發送失敗 (Twilio)')
+    throw new CustomError(500, 'error.twilioOtpSendFail', '簡訊OTP發送失敗 (Twilio)')
   }
 }
 
