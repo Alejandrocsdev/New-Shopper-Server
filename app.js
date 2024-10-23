@@ -15,6 +15,8 @@ const corsOptions = {
   origin: frontUrl,
   credentials: true
 }
+// 引用 Cookie-Parser 中間件
+const cookieParser = require('cookie-parser')
 // 引用 Passport 初始化模組
 const { passportInit } = require('./config/passport')
 // 引用路由模組
@@ -25,6 +27,8 @@ const { defaultRoute, globalError } = require('./middlewares')
 app.use(express.json())
 // 中間件: 跨來源資源共用
 app.use(cors(corsOptions))
+// 中間件: 解析 Cookie
+app.use(cookieParser())
 // 掛載路由中間件
 app.use('/api', routes)
 // 掛載預設路由中間件

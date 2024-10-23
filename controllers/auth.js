@@ -18,6 +18,24 @@ class AuthController extends Validator {
     super(rules)
   }
 
+  refresh = asyncError(async (req, res, next) => {
+    const cookies = req.cookies
+
+    if (!cookies?.jwt) throw new CustomError(401, 'error.noRefreshToken', '查無刷新憑證')
+
+    const refreshToken = cookies.jwt
+
+    const user = await User.findOne({ where: { refreshToken } })
+
+    const { id } = encrypt.verifyToken(refreshToken, 'rt')
+
+    if (user || id !== user.id) throw new CustomError(403, 'error.tokenRefreshFail', '存取憑證刷新失敗')
+
+    const accessToken = encrypt.signAccessToken(id)
+
+    res.status(200).json({ message: '存取憑證刷新成功', accessToken })
+  })
+
   autoSignIn = asyncError(async (req, res, next) => {
     const { userId } = req.params
 
