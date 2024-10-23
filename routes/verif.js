@@ -9,5 +9,6 @@ router.post('/verify/otp', verifController.verifyOtp)
 
 // 信箱
 router.post('/send/link', verifController.sendLink)
+router.get('/verify/link', verifController.verifyLink)
 
 module.exports = router

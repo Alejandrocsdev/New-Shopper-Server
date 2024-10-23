@@ -17,9 +17,10 @@ const smsType = process.env.SMS_TYPE
 // 需驗證Body路由
 const v = {
   phone: ['sendOtp', 'verifyOtp'],
-  isReset: ['sendOtp', 'sendLink'],
+  isReset: ['sendOtp'],
   otp: ['verifyOtp'],
-  email: ['sendLink']
+  email: ['sendLink'],
+  lang: ['sendLink']
 }
 // Body驗證條件
 const schema = (route) => {
@@ -35,6 +36,9 @@ const schema = (route) => {
       : Joi.forbidden(),
     email: v['email'].includes(route) 
       ? Joi.string().email().required() 
+      : Joi.forbidden(),
+    lang: v['lang'].includes(route) 
+      ? Joi.string().valid('zh', 'en', 'es').required() 
       : Joi.forbidden()
   })
 }
@@ -132,25 +136,49 @@ class VerifController extends Validator {
   sendLink = asyncError(async (req, res, next) => {
     // 驗證請求主體
     this.validateBody(req.body, 'sendLink')
-    const { email, isReset } = req.body
+    const { email, lang } = req.body
 
     // 取得用戶資料
     const user = await User.findOne({ where: { email } })
 
-    if (isReset) {
-      // 如Email不存在,無法重設密碼
-      if (!user) throw new CustomError(400, 'error.unsignedEmail', '未註冊電子信箱')
-    }
-
+    // 如Email不存在,無法重設密碼
+    if (!user) throw new CustomError(400, 'error.unsignedEmail', '未註冊電子信箱')
+    
     // 信箱內容資料
     const username = user.username
     const token = encrypt.signEmailToken(user.id)
-    const link = `${backUrl}/verif/link?token=${token}`
+    const link = `${backUrl}/verif/verify/link?token=${token}&lang=${lang}`
 
     // 發送信箱
     await sendMail({ email, username, link }, 'verify')
     // 成功回應
     res.status(200).json({ message: '信箱OTP發送成功 (gmail)' })
+  })
+
+  verifyLink = asyncError(async (req, res, next) => {
+    const { token, lang } = req.query
+
+    // 導向前端連結
+    const url = (verified, data) => {
+      const query = verified ? 'email' : 'message'
+      return `${frontUrl}/${lang}/reset?verified=${verified}&${query}=${data}`
+    }
+
+    try {
+      const { id } = encrypt.verifyToken(token, 'email')
+      const user = await User.findByPk(id)
+
+      if (!user) res.redirect(url(false, 'Email未被註冊'))
+
+      // 成功回應
+      res.redirect(url(true, user.email))
+    } catch (err) {
+      if (err.name === 'TokenExpiredError') {
+        res.redirect(url(false, '連結過期'))
+      } else {
+        res.redirect(url(false, '連結無效'))
+      }
+    }
   })
 }
 
