@@ -6,8 +6,6 @@ const { asyncError } = require('../middlewares')
 const { time } = require('../utils')
 // 引用自定義驗證模組
 const Validator = require('../Validator')
-// 引用驗證模組
-const Joi = require('joi')
 // 客製化錯誤訊息模組
 const CustomError = require('../errors/CustomError')
 // 發送器模組 (信箱 / 電話)
@@ -15,30 +13,19 @@ const sendSMS = require('../config/phone')
 const sendMail = require('../config/email')
 const smsType = process.env.SMS_TYPE
 // 需驗證Body路由
-const v = {
-  phone: ['resetCompletePhone'],
-  email: ['resetCompleteEmail']
-}
-// Body驗證條件
-const schema = (route) => {
-  return Joi.object({
-    phone: v['phone'].includes(route)
-      ? Joi.string().regex(/^09/).length(10).required()
-      : Joi.forbidden(),
-    email: v['email'].includes(route) 
-      ? Joi.string().email().required() 
-      : Joi.forbidden()
-  })
+const rules = {
+  resetPwdPhone: ['phone'],
+  resetPwdEmail: ['email']
 }
 
 class NotifyController extends Validator {
   constructor() {
-    super(schema)
+    super(rules)
   }
 
-  resetCompletePhone = asyncError(async (req, res, next) => {
+  resetPwdPhone = asyncError(async (req, res, next) => {
     // 驗證請求主體
-    this.validateBody(req.body, 'resetCompletePhone')
+    this.validateBody(req.body, 'resetPwdPhone')
     const { phone } = req.body
 
     // 取得用戶資料
@@ -57,9 +44,9 @@ class NotifyController extends Validator {
     res.status(200).json({ message: `密碼變更通知寄出成功 (${smsType})` })
   })
 
-  resetCompleteEmail = asyncError(async (req, res, next) => {
+  resetPwdEmail = asyncError(async (req, res, next) => {
     // 驗證請求主體
-    this.validateBody(req.body, 'resetCompleteEmail')
+    this.validateBody(req.body, 'resetPwdEmail')
     const { email } = req.body
 
     // 取得用戶資料

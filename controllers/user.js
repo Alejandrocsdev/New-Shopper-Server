@@ -6,26 +6,16 @@ const { asyncError } = require('../middlewares')
 const CustomError = require('../errors/CustomError')
 // 引用自定驗證模組
 const Validator = require('../Validator')
-// 引用驗證模組
-const Joi = require('joi')
 // 引用 加密 模組
 const { encrypt } = require('../utils')
 // 需驗證Body路由
-const v = {
-  password: ['putPwdByInfo']
-}
-// Body驗證條件
-const schema = (route) => {
-  return Joi.object({
-    password: v['password'].includes(route)
-      ? Joi.string().min(8).max(16).regex(/[a-z]/).regex(/[A-Z]/).regex(/\d/).required()
-      : Joi.forbidden()
-  })
+const rules = {
+  putPwdByInfo: ['password']
 }
 
 class UserController extends Validator {
   constructor() {
-    super(schema)
+    super(rules)
   }
 
   findUserByInfo = asyncError(async (req, res, next) => {

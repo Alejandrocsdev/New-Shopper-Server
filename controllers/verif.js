@@ -6,8 +6,6 @@ const { asyncError } = require('../middlewares')
 const CustomError = require('../errors/CustomError')
 // 引用自定驗證模組
 const Validator = require('../Validator')
-// 引用驗證模組
-const Joi = require('joi')
 // 引用 加密 模組
 const { encrypt, backUrl, frontUrl } = require('../utils')
 // 發送器模組 (電話 / Email)
@@ -15,37 +13,15 @@ const sendMail = require('../config/email')
 const sendSMS = require('../config/phone')
 const smsType = process.env.SMS_TYPE
 // 需驗證Body路由
-const v = {
-  phone: ['sendOtp', 'verifyOtp'],
-  isReset: ['sendOtp'],
-  otp: ['verifyOtp'],
-  email: ['sendLink'],
-  lang: ['sendLink']
-}
-// Body驗證條件
-const schema = (route) => {
-  return Joi.object({
-    phone: v['phone'].includes(route)
-      ? Joi.string().regex(/^09/).length(10).required()
-      : Joi.forbidden(),
-    isReset: v['isReset'].includes(route) 
-      ? Joi.boolean() 
-      : Joi.forbidden(),
-    otp: v['otp'].includes(route) 
-      ? Joi.string().length(6).required() 
-      : Joi.forbidden(),
-    email: v['email'].includes(route) 
-      ? Joi.string().email().required() 
-      : Joi.forbidden(),
-    lang: v['lang'].includes(route) 
-      ? Joi.string().valid('zh', 'en', 'es').required() 
-      : Joi.forbidden()
-  })
+const rules = {
+  sendOtp: ['phone', 'isReset'],
+  verifyOtp: ['phone', 'otp'],
+  sendLink: ['email', 'lang']
 }
 
 class VerifController extends Validator {
   constructor() {
-    super(schema)
+    super(rules)
   }
 
   sendOtp = asyncError(async (req, res, next) => {
@@ -143,7 +119,7 @@ class VerifController extends Validator {
 
     // 如Email不存在,無法重設密碼
     if (!user) throw new CustomError(400, 'error.unsignedEmail', '未註冊電子信箱')
-    
+
     // 信箱內容資料
     const username = user.username
     const token = encrypt.signEmailToken(user.id)
@@ -168,7 +144,7 @@ class VerifController extends Validator {
       const { id } = encrypt.verifyToken(token, 'email')
       const user = await User.findByPk(id)
 
-      if (!user) res.redirect(url(false, 'unsignedEmail'))
+      if (!user) res.redirect(url(false, 'error.unsignedEmail'))
 
       // 成功回應
       res.redirect(url(true, user.email))

@@ -6,30 +6,16 @@ const { asyncError } = require('../middlewares')
 const CustomError = require('../errors/CustomError')
 // 引用自定驗證模組
 const Validator = require('../Validator')
-// 引用驗證模組
-const Joi = require('joi')
 // 引用 加密 模組
 const { encrypt, cookie } = require('../utils')
-// 需驗證Body路由 (validate)
-const v = {
-  phone: ['signUp'],
-  password: ['signUp']
-}
-// Body驗證條件
-const schema = (route) => {
-  return Joi.object({
-    phone: v['phone'].includes(route)
-      ? Joi.string().regex(/^09/).length(10).required()
-      : Joi.forbidden(),
-    password: v['password'].includes(route)
-      ? Joi.string().min(8).max(16).regex(/[a-z]/).regex(/[A-Z]/).regex(/\d/).required()
-      : Joi.forbidden()
-  })
+// 需驗證Body路由
+const rules = {
+  signUp: ['phone', 'password']
 }
 
 class AuthController extends Validator {
   constructor() {
-    super(schema)
+    super(rules)
   }
 
   autoSignIn = asyncError(async (req, res, next) => {
