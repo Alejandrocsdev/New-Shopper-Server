@@ -10,14 +10,16 @@ const Validator = require('../Validator')
 const Joi = require('joi')
 // 引用 加密 模組
 const { encrypt, backUrl, frontUrl } = require('../utils')
-// 發送器模組 (電話)
+// 發送器模組 (電話 / Email)
+const sendMail = require('../config/email')
 const sendSMS = require('../config/phone')
 const smsType = process.env.SMS_TYPE
 // 需驗證Body路由
 const v = {
   phone: ['sendOtp', 'verifyOtp'],
-  isReset: ['sendOtp'],
-  otp: ['verifyOtp']
+  isReset: ['sendOtp', 'sendLink'],
+  otp: ['verifyOtp'],
+  email: ['sendLink']
 }
 // Body驗證條件
 const schema = (route) => {
@@ -30,6 +32,9 @@ const schema = (route) => {
       : Joi.forbidden(),
     otp: v['otp'].includes(route) 
       ? Joi.string().length(6).required() 
+      : Joi.forbidden(),
+    email: v['email'].includes(route) 
+      ? Joi.string().email().required() 
       : Joi.forbidden()
   })
 }
@@ -122,6 +127,30 @@ class VerifController extends Validator {
 
       throw new CustomError(401, 'error.invalidOtp', 'OTP無效')
     }
+  })
+
+  sendLink = asyncError(async (req, res, next) => {
+    // 驗證請求主體
+    this.validateBody(req.body, 'sendLink')
+    const { email, isReset } = req.body
+
+    // 取得用戶資料
+    const user = await User.findOne({ where: { email } })
+
+    if (isReset) {
+      // 如Email不存在,無法重設密碼
+      if (!user) throw new CustomError(400, 'error.unsignedEmail', '未註冊電子信箱')
+    }
+
+    // 信箱內容資料
+    const username = user.username
+    const token = encrypt.signEmailToken(user.id)
+    const link = `${backUrl}/verif/link?token=${token}`
+
+    // 發送信箱
+    await sendMail({ email, username, link }, 'verify')
+    // 成功回應
+    res.status(200).json({ message: '信箱OTP發送成功 (gmail)' })
   })
 }
 
