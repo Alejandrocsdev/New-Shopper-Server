@@ -1,5 +1,6 @@
+const time = require('./time')
 const cookie = require('./cookie')
 const encrypt = require('./encrypt')
 const { backUrl, frontUrl } = require('./url')
 
-module.exports = { cookie, encrypt, backUrl, frontUrl }
+module.exports = { time, cookie, encrypt, backUrl, frontUrl }

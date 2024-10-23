@@ -168,15 +168,15 @@ class VerifController extends Validator {
       const { id } = encrypt.verifyToken(token, 'email')
       const user = await User.findByPk(id)
 
-      if (!user) res.redirect(url(false, 'Email未被註冊'))
+      if (!user) res.redirect(url(false, 'unsignedEmail'))
 
       // 成功回應
       res.redirect(url(true, user.email))
     } catch (err) {
       if (err.name === 'TokenExpiredError') {
-        res.redirect(url(false, '連結過期'))
+        res.redirect(url(false, 'linkExpired'))
       } else {
-        res.redirect(url(false, '連結無效'))
+        res.redirect(url(false, 'linkInvalid'))
       }
     }
   })
