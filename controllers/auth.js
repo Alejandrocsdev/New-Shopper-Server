@@ -29,7 +29,7 @@ class AuthController extends Validator {
 
     const { id } = encrypt.verifyToken(refreshToken, 'rt')
 
-    if (user || id !== user.id) throw new CustomError(403, 'error.tokenRefreshFail', '存取憑證刷新失敗')
+    if (!user || id !== user.id) throw new CustomError(403, 'error.tokenRefreshFail', '存取憑證刷新失敗')
 
     const accessToken = encrypt.signAccessToken(id)
 

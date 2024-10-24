@@ -22,4 +22,29 @@ const passportInit = passport.initialize()
 const pwdSignInAuth = passport.authenticate('local', { session: false })
 const smsSignInAuth = passport.authenticate('sms', { session: false })
 
-module.exports = { passportInit, pwdSignInAuth, smsSignInAuth }
+// 憑證驗證
+const jwtAuth = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization
+    if (!authHeader) throw new CustomError(401, 'error.signInAgain', '未提供認證標頭')
+
+    const token = authHeader.split(' ')[1]
+    if (!token) throw new CustomError(401, 'error.signInAgain', '未提供存取憑證')
+
+    const payload = encrypt.verifyToken(token, 'at')
+    if (!payload || !payload.id) throw new CustomError(400, 'error.signInAgain', '無效的憑證數據')
+
+    const currentTime = Math.floor(Date.now() / 1000)
+    if (payload.exp && payload.exp < currentTime) throw new CustomError(401, 'error.signInAgain', '存取憑證已過期')
+
+    const user = await User.findByPk(payload.id, { attributes: ['username', 'avatar'] })
+    if (!user) throw new CustomError(404, 'error.signInAgain', '查無用戶')
+
+    req.user = user.toJSON()
+    next()
+  } catch (err) {
+    next(err)
+  }
+}
+
+module.exports = { passportInit, pwdSignInAuth, smsSignInAuth, jwtAuth }
