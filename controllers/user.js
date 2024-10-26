@@ -49,12 +49,6 @@ class UserController extends Validator {
     await User.update({ password: hashedPassword }, { where: { [infoType]: info } })
     res.status(200).json({ message: '密碼更新成功' })
   })
-
-  getAuthUser = asyncError(async (req, res, next) => {
-    const { user } = req
-
-    res.status(200).json({ message: '取得用戶資料成功', user })
-  })
 }
 
 module.exports = new UserController()

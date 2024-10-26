@@ -9,13 +9,19 @@ const config = {
   domain: isProduction ? process.env.COOKIE_DOMAIN : 'localhost'
 }
 
+// Passing "options.maxAge" is deprecated. 
+// In v5.0.0 of Express, this option will be ignored, 
+// as res.clearCookie will automatically set cookies to expire immediately.
+const clearConfig = { ...config }
+delete clearConfig.maxAge
+
 class Cookie {
   store(res, token) {
     return res.cookie('jwt', token, config)
   }
 
   clear(res) {
-    return res.clearCookie('jwt', config)
+    return res.clearCookie('jwt', clearConfig)
   }
 }
 

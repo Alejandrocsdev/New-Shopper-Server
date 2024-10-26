@@ -21,7 +21,7 @@ class AuthController extends Validator {
   refresh = asyncError(async (req, res, next) => {
     const cookies = req.cookies
 
-    if (!cookies?.jwt) throw new CustomError(401, 'error.noRefreshToken', '查無刷新憑證')
+    if (!cookies?.jwt) throw new CustomError(401, 'error.signInAgain', '查無刷新憑證')
 
     const refreshToken = cookies.jwt
 
@@ -29,7 +29,7 @@ class AuthController extends Validator {
 
     const { id } = encrypt.verifyToken(refreshToken, 'rt')
 
-    if (!user || id !== user.id) throw new CustomError(403, 'error.tokenRefreshFail', '存取憑證刷新失敗')
+    if (!user || id !== user.id) throw new CustomError(403, 'error.signInAgain', '存取憑證刷新失敗')
 
     const accessToken = encrypt.signAccessToken(id)
 
@@ -53,7 +53,7 @@ class AuthController extends Validator {
   signIn = asyncError(async (req, res, next) => {
     const { user } = req
 
-    if (!user) throw new CustomError(401, 'error.pwdSignInFail', '密碼登入失敗')
+    if (!user) throw new CustomError(401, 'error.signInFail', '登入失敗')
 
     const refreshToken = encrypt.signRefreshToken(user.id)
     await User.update({ refreshToken }, { where: { id: user.id } })
@@ -80,6 +80,30 @@ class AuthController extends Validator {
     delete newUser.password
 
     res.status(201).json({ message: '新用戶註冊成功', user: newUser })
+  })
+
+  signOut = asyncError(async (req, res, next) => {
+    const cookies = req.cookies
+    if (!cookies?.jwt) {
+      return res.status(200).json({ message: 'XXX登出成功' })
+    }
+
+    const refreshToken = cookies.jwt
+    const user = await User.findOne({ where: { refreshToken } })
+
+    cookie.clear(res)
+
+    if (user) {
+      await User.update({ refreshToken: null }, { where: { id: user.id } })
+    }
+
+    res.status(200).json({ message: '登出成功' })
+  })
+
+  getAuthUser = asyncError(async (req, res, next) => {
+    const { user } = req
+
+    res.status(200).json({ message: '取得用戶資料成功', user })
   })
 }
 

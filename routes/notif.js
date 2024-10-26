@@ -4,7 +4,7 @@ const router = Router()
 const { notifController } = require('../controllers')
 
 // 簡訊
-router.post('/reset/password/phone', notifController.resetPwdPhone)
-router.post('/reset/password/email', notifController.resetPwdEmail)
+router.post('/reset/pwd/phone', notifController.resetPwdPhone)
+router.post('/reset/pwd/email', notifController.resetPwdEmail)
 
 module.exports = router
