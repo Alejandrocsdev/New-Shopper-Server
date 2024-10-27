@@ -106,7 +106,7 @@ class AuthController extends Validator {
     res.status(200).json({ message: '取得用戶資料成功', user })
   })
 
-  fbSignIn = asyncError(async (req, res, next) => {
+  thirdPartySign = asyncError(async (req, res, next) => {
     const { user } = req
 
     if (!user) throw new CustomError(401, 'error.signInFail', '登入失敗')
