@@ -16,8 +16,13 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         defaultValue: false
       },
+      facebookId: {
+        allowNull: true,
+        type: DataTypes.STRING,
+        unique: true
+      },
       password: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.STRING
       },
       phone: {

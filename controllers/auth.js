@@ -6,8 +6,8 @@ const { asyncError } = require('../middlewares')
 const CustomError = require('../errors/CustomError')
 // 引用自定驗證模組
 const Validator = require('../Validator')
-// 引用 加密 模組
-const { encrypt, cookie } = require('../utils')
+// 引用 工具
+const { encrypt, cookie, frontUrl } = require('../utils')
 // 需驗證Body路由
 const rules = {
   signUp: ['phone', 'password']
@@ -104,6 +104,18 @@ class AuthController extends Validator {
     const { user } = req
 
     res.status(200).json({ message: '取得用戶資料成功', user })
+  })
+
+  fbSignIn = asyncError(async (req, res, next) => {
+    const { user } = req
+
+    if (!user) throw new CustomError(401, 'error.signInFail', '登入失敗')
+
+    const refreshToken = encrypt.signRefreshToken(user.id)
+    await User.update({ refreshToken }, { where: { id: user.id } })
+    cookie.store(res, refreshToken)
+
+    res.redirect(`${frontUrl}`)
   })
 }
 
