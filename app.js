@@ -35,6 +35,8 @@ app.use(cors(corsOptions))
 app.use(cookieParser())
 // 掛載路由中間件
 app.use('/api', routes)
+// Root Route
+app.get('/', (req, res) => res.status(200).json({ message: 'Server is up and running.' }))
 // 掛載預設路由中間件
 app.all('*', defaultRoute)
 // 掛載全域錯誤中間件
