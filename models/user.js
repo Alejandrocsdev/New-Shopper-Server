@@ -2,7 +2,13 @@
 const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
-    static associate(models) {}
+    static associate(models) {
+      User.hasOne(models.Image, {
+        foreignKey: 'entityId',
+        scope: { entityType: 'user' },
+        as: 'avatar'
+      })
+    }
   }
   User.init(
     {
@@ -39,10 +45,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         type: DataTypes.STRING,
         unique: true
-      },
-      avatar: {
-        allowNull: true,
-        type: DataTypes.STRING
       },
       refreshToken: {
         allowNull: true,

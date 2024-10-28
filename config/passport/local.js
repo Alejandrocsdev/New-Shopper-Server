@@ -1,7 +1,9 @@
 // 引用 Passport-Local 模組
 const { Strategy } = require('passport-local')
 // 引用 Models
-const { User } = require('../../models')
+const { User, Image } = require('../../models')
+// 引用Sequelize的Operator
+const { Op } = require('sequelize')
 // 引用加密模組
 const { encrypt } = require('../../utils')
 // 引用客製化錯誤訊息模組
@@ -14,18 +16,17 @@ const customFields = { usernameField: 'signInKey', passwordField: 'password' }
 const verifyCallback = async (signInKey, password, cb) => {
   try {
     // 根據 信箱 / 電話 / 帳號 查找用戶
-    const users = await Promise.all([
-      User.findOne({ where: { email: signInKey } }),
-      User.findOne({ where: { phone: signInKey } }),
-      User.findOne({ where: { username: signInKey } })
-    ])
+    const user = await User.findOne({
+      where: {
+        [Op.or]: [
+          { email: signInKey }, 
+          { phone: signInKey }, 
+          { username: signInKey }]
+      },
+      include: [{ model: Image, as: 'avatar', attributes: ['link'] }]
+    })
 
-    // 找到存在用戶索引
-    const userIndex = users.findIndex((user) => user !== null)
-    if (userIndex === -1) throw new CustomError(404, 'error.wrongSignInCredential', '輸入資料錯誤')
-
-    // 根據索引取得用戶
-    const user = users[userIndex]
+    if (!user) throw new CustomError(404, 'error.wrongSignInCredential', '輸入資料錯誤')
 
     // 比較密碼
     const match = await encrypt.hashCompare(password, user.password)

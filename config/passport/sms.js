@@ -1,7 +1,7 @@
 // 引用 Passport-Custom 模組
 const { Strategy } = require('passport-custom')
 // 引用 Models
-const { User, Otp } = require('../../models')
+const { User, Image, Otp } = require('../../models')
 // 引用加密模組
 const { encrypt } = require('../../utils')
 // 引用客製化錯誤訊息模組
@@ -12,11 +12,15 @@ const verifyCallback = async (req, cb) => {
   try {
     // 從請求主體取得資料
     const { phone, otp } = req.body
-    if (!phone || !otp) throw new CustomError(400, 'error.missingPhoneOrOtp', '缺少電話號碼或OTP驗證碼')
+    if (!phone || !otp)
+      throw new CustomError(400, 'error.missingPhoneOrOtp', '缺少電話號碼或OTP驗證碼')
 
     // 確認資料是否存在
     const [user, otpRecord] = await Promise.all([
-      User.findOne({ where: { phone } }),
+      User.findOne({
+        where: { phone },
+        include: [{ model: Image, as: 'avatar', attributes: ['link', 'deleteData'] }]
+      }),
       Otp.findOne({ where: { phone } })
     ])
     if (!user) throw new CustomError(404, 'error.unsignedPhone', '未註冊電話號碼')

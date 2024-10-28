@@ -1,4 +1,6 @@
-const isProduction = process.env.NODE_ENV === 'production'
+const { NODE_ENV, COOKIE_DOMAIN, COOKIE_CUSTOM_DOMAIN } = process.env
+
+const isProduction = NODE_ENV === 'production'
 
 const config = {
   maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -6,11 +8,11 @@ const config = {
   path: '/',
   sameSite: isProduction ? 'none' : 'strict',
   secure: isProduction,
-  domain: isProduction ? process.env.COOKIE_DOMAIN : 'localhost'
+  domain: isProduction ? COOKIE_CUSTOM_DOMAIN || COOKIE_DOMAIN : 'localhost'
 }
 
-// Passing "options.maxAge" is deprecated. 
-// In v5.0.0 of Express, this option will be ignored, 
+// Passing "options.maxAge" is deprecated.
+// In v5.0.0 of Express, this option will be ignored,
 // as res.clearCookie will automatically set cookies to expire immediately.
 const clearConfig = { ...config }
 delete clearConfig.maxAge
