@@ -6,9 +6,13 @@ on:
       action:
         description: 'Select database action'
         required: true
-        default: 'drop'
+        default: 'reset'
         options:
+          - create
           - drop
+          - migrate
+          - seed
+          - reset
 
 jobs:
   manage-database:
@@ -33,6 +37,25 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run Database Command
+      - name: Create Database
+        if: ${{ github.event.inputs.action == 'create' }}
+        run: npx sequelize-cli db:create
+
+      - name: Drop Database
         if: ${{ github.event.inputs.action == 'drop' }}
         run: npx sequelize-cli db:drop
+
+      - name: Migrate Database
+        if: ${{ github.event.inputs.action == 'migrate' }}
+        run: npx sequelize-cli db:migrate
+
+      - name: Seed Database
+        if: ${{ github.event.inputs.action == 'seed' }}
+        run: npx sequelize-cli db:seed:all
+
+      - name: Reset Database
+        if: ${{ github.event.inputs.action == 'reset' }}
+        run: |
+          npx sequelize-cli db:drop
+          npx sequelize-cli db:create
+          npx sequelize-cli db:migrate
