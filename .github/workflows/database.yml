@@ -14,6 +14,13 @@ jobs:
   manage-database:
     runs-on: ubuntu-latest
 
+    env:  # Set environment variables at the job level
+      NODE_ENV: production
+      MYSQL_PROD_USERNAME: ${{ secrets.MYSQL_PROD_USERNAME }}
+      MYSQL_PROD_PASSWORD: ${{ secrets.MYSQL_PROD_PASSWORD }}
+      MYSQL_PROD_HOST: ${{ secrets.MYSQL_PROD_HOST }}
+      MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+
     steps:
       - name: Check out the code
         uses: actions/checkout@v3
@@ -26,15 +33,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Set up environment variables
-        env:
-          NODE_ENV: production
-          MYSQL_PROD_USERNAME: ${{ secrets.MYSQL_PROD_USERNAME }}
-          MYSQL_PROD_PASSWORD: ${{ secrets.MYSQL_PROD_PASSWORD }}
-          MYSQL_PROD_HOST: ${{ secrets.MYSQL_PROD_HOST }}
-          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
-
-      # Step 5: Run the database command
       - name: Run Database Command
         if: ${{ github.event.inputs.action == 'drop' }}
         run: npx sequelize db:drop
