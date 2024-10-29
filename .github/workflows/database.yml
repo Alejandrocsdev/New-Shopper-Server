@@ -20,9 +20,9 @@ jobs:
 
     env:  # Set environment variables at the job level
       NODE_ENV: production
-      MYSQL_PROD_USERNAME: ${{ secrets.MYSQL_PROD_USERNAME }}
-      MYSQL_PROD_PASSWORD: ${{ secrets.MYSQL_PROD_PASSWORD }}
-      MYSQL_PROD_HOST: ${{ secrets.MYSQL_PROD_HOST }}
+      MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+      MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+      MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
       MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
 
     steps:
