@@ -85,7 +85,7 @@ class AuthController extends Validator {
   signOut = asyncError(async (req, res, next) => {
     const cookies = req.cookies
     if (!cookies?.jwt) {
-      return res.status(200).json({ message: 'XXX登出成功' })
+      return res.status(200).json({ message: '登出成功' })
     }
 
     const refreshToken = cookies.jwt
