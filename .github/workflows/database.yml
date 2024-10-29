@@ -1,0 +1,40 @@
+name: Database Management
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Select database action'
+        required: true
+        default: 'drop'
+        options:
+          - drop
+
+jobs:
+  manage-database:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Set up environment variables
+        env:
+          NODE_ENV: production
+          MYSQL_PROD_USERNAME: ${{ secrets.MYSQL_PROD_USERNAME }}
+          MYSQL_PROD_PASSWORD: ${{ secrets.MYSQL_PROD_PASSWORD }}
+          MYSQL_PROD_HOST: ${{ secrets.MYSQL_PROD_HOST }}
+          MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+
+      # Step 5: Run the database command
+      - name: Run Database Command
+        if: ${{ github.event.inputs.action == 'drop' }}
+        run: npx sequelize db:drop
