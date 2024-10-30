@@ -72,11 +72,9 @@ class UserController extends Validator {
     const imageRecord = await Image.findOne({ where: { entityId: user.id, entityType: 'user' } })
 
     if (imageRecord) {
-      console.log('update')
       await Image.update({ link, deleteData }, { where: { entityId: user.id, entityType: 'user' } })
       await deleteImage(imageRecord.deleteData, storageType)
     } else {
-      console.log('create')
       await Image.create({ link, deleteData, entityId: user.id, entityType: 'user' })
     }
 
