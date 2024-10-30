@@ -1,6 +1,9 @@
 const multer = require('multer')
 const path = require('path')
 
+const fs = require('fs')
+console.log(fs.existsSync('storage/cloud/cloudinary/temp/'))
+
 const storage = (storagePath) => {
   return multer.diskStorage({
     destination: (req, file, cb) => {
