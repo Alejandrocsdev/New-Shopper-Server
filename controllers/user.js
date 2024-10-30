@@ -82,7 +82,7 @@ class UserController extends Validator {
 
     // await Image.upsert({ link, deleteData, entityId: user.id, entityType: 'user' })
 
-    res.status(200).json({ message: '用戶資料更新成功', link })
+    res.status(200).json({ message: '用戶頭像更新成功', link })
   })
 }
 

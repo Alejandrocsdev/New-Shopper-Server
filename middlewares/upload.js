@@ -1,17 +1,19 @@
 const multer = require('multer')
 const path = require('path')
 
+// file system can be different in server platforms
+
 const fs = require('fs')
-console.log(fs.existsSync('storage/cloud/cloudinary/temp/'))
+if (!fs.existsSync('storage/cloud/cloudinary/temp/')) {
+  console.log('Directory does not exist. Creating now...')
+  fs.mkdirSync('storage/cloud/cloudinary/temp/', { recursive: true })
+  console.log('Directory created:', fs.existsSync('storage/cloud/cloudinary/temp/'))
+}
 
 const storage = (storagePath) => {
   return multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, storagePath)
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + path.extname(file.originalname))
-    }
+    destination: (req, file, cb) => cb(null, storagePath),
+    filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
   })
 }
 
@@ -19,7 +21,8 @@ const storage = (storagePath) => {
 const fileSize = 3 * 1024 * 1024
 
 const localUpload = multer({ storage: storage('storage/local/images/'), limits: { fileSize } })
-const tempUpload = multer({ storage: storage('storage/cloud/cloudinary/temp/'), limits: { fileSize } })
+const memoryUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize } })
+// const tempUpload = multer({ storage: storage('storage/cloud/cloudinary/temp/'), limits: { fileSize } })
 const directUpload = multer({ limits: { fileSize } })
 
 function upload(type) {
@@ -28,7 +31,7 @@ function upload(type) {
       return localUpload.single('image')
       break
     case type === 'cloudinary':
-      return tempUpload.single('image')
+      return memoryUpload.single('image')
       break
     case type === 'imgur':
       return directUpload.single('image')

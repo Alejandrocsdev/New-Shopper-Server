@@ -16,20 +16,35 @@ cloudinary.config({
 class Cloudinary {
   async upload(file) {
     // 檔案不存在停止執行
-    if (!file) return null
+    if (!file || !file.buffer) return null
 
     let deleteData = null
 
     try {
-      const filePath = path.resolve(__dirname, '..', '..', '..', file.path)
-      const data = await cloudinary.uploader.upload(filePath)
+      // const filePath = path.resolve(__dirname, '..', '..', '..', file.path)
+      // const data = await cloudinary.uploader.upload(filePath)
+      const data = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream((error, result) => {
+          if (error) {
+            reject(new CustomError(500, 'error.uploadImageFail', '上傳至 Cloudinary 失敗'))
+          } else {
+            resolve(result)
+          }
+        })
+        uploadStream.end(file.buffer)
+      })
 
       const link = data.secure_url
       deleteData = data.public_id
 
-      fs.unlink(filePath, (err) => {
-        if (err) throw new CustomError(500, 'error.removeTempImageFail', '移除本地暫存圖檔失敗 (cloudinary)')
-      })
+      // fs.unlink(filePath, (err) => {
+      //   if (err)
+      //     throw new CustomError(
+      //       500,
+      //       'error.removeTempImageFail',
+      //       '移除本地暫存圖檔失敗 (cloudinary)'
+      //     )
+      // })
 
       return { link, deleteData }
     } catch (err) {
