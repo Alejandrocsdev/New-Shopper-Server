@@ -63,8 +63,7 @@ class UserController extends Validator {
     // 本地存儲才有第三參數: { entityType, entityId, deleteData  }
     const image = await uploadImage(file, storageType, {
       entityType: 'user',
-      entityId: user.id,
-      deleteData: user.avatar?.deleteData
+      entityId: user.id
     })
 
     const { link, deleteData } = image || {}

@@ -6,9 +6,7 @@ const CustomError = require('../../errors/CustomError')
 
 class Local {
   async upload(file, options) {
-    const { entityType, entityId, deleteData } = options
-    // 來自臉書或Gmail照片無須刪除(從未儲存)
-    if (deleteData === 'fb' || deleteData === 'gm') return
+    const { entityType, entityId } = options
     // 檔案不存在停止執行
     if (!file) return null
 
@@ -26,8 +24,8 @@ class Local {
       await fs.promises.rename(file.path, filePath)
       // 資料庫儲存名稱 (不含後端public網域)
       const storedPath = `/uploads/${localIndex}${file.filename}`
-      
-      return { link: storedPath, deleteData: file.filename }
+
+      return { link: storedPath, deleteData: `/${localIndex}${file.filename}` }
     } catch (err) {
       console.log(err.message)
       throw new CustomError(500, 'error.uploadImageFail', '本地圖檔上傳失敗 (local)')
@@ -35,9 +33,17 @@ class Local {
   }
 
   async delete(fileName) {
+    const deleteData = fileName
+    // 來自臉書或Gmail照片無須刪除(從未儲存)
+    if (deleteData === 'fb' || deleteData === 'gm') return
     try {
-      const filePath = path.resolve(__dirname, fileName)
-      await fs.unlink(filePath)
+      const filePath = path.join(__dirname, '..', '..', 'storage', 'local', 'images', fileName)
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.log(err.message)
+          throw new CustomError(500, 'error.removeTempImageFail', '移除圖檔失敗 (local)')
+        }
+      })
     } catch (err) {
       console.log(err.message)
       throw new CustomError(500, 'error.removeImageFail', '移除圖檔失敗 (local)')
@@ -46,5 +52,3 @@ class Local {
 }
 
 module.exports = new Local()
-
-
