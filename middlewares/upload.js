@@ -4,10 +4,10 @@ const path = require('path')
 // file system can be different in server platforms
 
 const fs = require('fs')
-if (!fs.existsSync('storage/cloud/cloudinary/temp/')) {
+if (!fs.existsSync('storage/local/images/')) {
   console.log('Directory does not exist. Creating now...')
-  fs.mkdirSync('storage/cloud/cloudinary/temp/', { recursive: true })
-  console.log('Directory created:', fs.existsSync('storage/cloud/cloudinary/temp/'))
+  fs.mkdirSync('storage/local/images/', { recursive: true })
+  console.log('Directory created:', fs.existsSync('storage/local/images/'))
 }
 
 const storage = (storagePath) => {
