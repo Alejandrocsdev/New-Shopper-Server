@@ -3,11 +3,11 @@
 /** @type {import('sequelize-cli').Migration} */
 
 const roles = ['buyer', 'seller', 'admin', 'editor', 'viewer']
-const roleData = roles.map((role) => ({ name: role }))
+const rolesData = roles.map((role) => ({ name: role }))
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('roles', roleData)
+    await queryInterface.bulkInsert('roles', rolesData)
   },
 
   async down(queryInterface, Sequelize) {

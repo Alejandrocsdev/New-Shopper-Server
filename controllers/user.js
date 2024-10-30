@@ -53,7 +53,7 @@ class UserController extends Validator {
     res.status(200).json({ message: '密碼更新成功' })
   })
 
-  putUser = asyncError(async (req, res, next) => {
+  putUserImage = asyncError(async (req, res, next) => {
     const { user } = req
 
     if (!user) throw new CustomError(401, 'error.signInAgain', '用戶授權失敗')
@@ -64,7 +64,7 @@ class UserController extends Validator {
     const image = await uploadImage(file, storageType, {
       entityType: 'user',
       entityId: user.id,
-      deleteData: user.avatar.deleteData
+      deleteData: user.avatar?.deleteData
     })
 
     const { link, deleteData } = image || {}
@@ -72,8 +72,11 @@ class UserController extends Validator {
     const imageRecord = await Image.findOne({ where: { entityId: user.id, entityType: 'user' } })
 
     if (imageRecord) {
+      console.log('update')
       await Image.update({ link, deleteData }, { where: { entityId: user.id, entityType: 'user' } })
+      await deleteImage(imageRecord.deleteData, storageType)
     } else {
+      console.log('create')
       await Image.create({ link, deleteData, entityId: user.id, entityType: 'user' })
     }
 
