@@ -1,30 +1,32 @@
 'use strict'
+
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Otps', {
+    await queryInterface.createTable('user_roles', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      phone: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      otp: {
-        allowNull: false,
-        type: Sequelize.STRING
-      },
-      expire_time: {
-        allowNull: false,
-        type: Sequelize.BIGINT
-      },
-      attempts: {
-        allowNull: false,
+      user_id: {
         type: Sequelize.INTEGER,
-        defaultValue: 0
+        references: {
+          model: 'users', // Matches the 'users' table in the User model
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+      },
+      role_id: {
+        type: Sequelize.INTEGER, 
+        references: {
+          model: 'roles', // Matches the 'roles' table in the Role model
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       created_at: {
         allowNull: false,
@@ -38,7 +40,8 @@ module.exports = {
       }
     })
   },
+
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Otps')
+    await queryInterface.dropTable('user_roles')
   }
 }

@@ -1,7 +1,7 @@
 // 引用 Passport-Facebook 模組
 const { Strategy } = require('passport-facebook')
 // 引用 Models
-const { User, Image } = require('../../models')
+const { User, Image, Role } = require('../../models')
 // 引用客製化錯誤訊息模組
 const CustomError = require('../../errors/CustomError')
 // 引用 工具
@@ -26,36 +26,42 @@ const verifyCallback = async (accessToken, refreshToken, profile, cb) => {
     const avatar = profile.photos[0]?.value || null
 
     // (1)檢查是否註冊過臉書-id
-    let user = await User.findOne({
-      where: { facebookId },
-      include: [{ model: Image, as: 'avatar', attributes: ['link', 'deleteData'] }]
-    })
+    let user = await User.findOne({ where: { facebookId } })
 
     if (!user) {
       // (2)檢查是否註冊過臉書-email
-      user = await User.findOne({ 
-        where: { email, facebookId: null },
-        include: [{ model: Image, as: 'avatar', attributes: ['link', 'deleteData'] }]
-      })
+      user = await User.findOne({ where: { email, facebookId: null } })
 
       // (3)更新facebookId，並在需要時更新avatar
       if (user) {
         await user.update({ facebookId })
         // 保留現有avatar或更新為Facebook的avatar
-        await Image.update(
-          {
-            link: user.avatar.link || avatar,
-            deleteData: user.avatar.deleteData || 'fb'
-          },
-          { where: { entityId: user.id, entityType: 'user' } }
-        )
+        const image = await Image.findOne({ where: { entityId: user.id, entityType: 'user' } })
+        if (!image) {
+          await Image.create({
+            link: avatar,
+            deleteData: 'fb',
+            entityId: user.id,
+            entityType: 'user'
+          })
+        }
       }
     }
 
     if (!user) {
-      const username = await encrypt.uniqueUsername(User)
+      const [username, buyerRole] = await Promise.all([
+        encrypt.uniqueUsername(User),
+        Role.findOne({ where: { name: 'buyer' } })
+      ])
+
       user = await User.create({ username, email, facebookId })
       await Image.create({ link: avatar, deleteData: 'fb', entityId: user.id, entityType: 'user' })
+
+      if (buyerRole) {
+        await user.addRole(buyerRole)
+      } else {
+        throw new CustomError(500, 'error.roleNotFound', '無法找到買家角色')
+      }
     }
 
     // 傳遞驗證成功的用戶資料

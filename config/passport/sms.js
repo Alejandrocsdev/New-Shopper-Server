@@ -17,10 +17,7 @@ const verifyCallback = async (req, cb) => {
 
     // 確認資料是否存在
     const [user, otpRecord] = await Promise.all([
-      User.findOne({
-        where: { phone },
-        include: [{ model: Image, as: 'avatar', attributes: ['link', 'deleteData'] }]
-      }),
+      User.findOne({ where: { phone } }),
       Otp.findOne({ where: { phone } })
     ])
     if (!user) throw new CustomError(404, 'error.unsignedPhone', '未註冊電話號碼')

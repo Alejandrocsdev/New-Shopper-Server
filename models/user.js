@@ -8,6 +8,12 @@ module.exports = (sequelize, DataTypes) => {
         scope: { entityType: 'user' },
         as: 'avatar'
       })
+      User.belongsToMany(models.Role, {
+        through: 'user_roles',
+        foreignKey: 'user_id',
+        otherKey: 'role_id',
+        as: 'roles'
+      })
     }
   }
   User.init(
@@ -54,8 +60,23 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: 'User',
-      tableName: 'Users',
-      underscored: true
+      tableName: 'users',
+      underscored: true,
+      defaultScope: {
+        include: [
+          {
+            model: sequelize.models.Image,
+            as: 'avatar',
+            attributes: ['link']
+          },
+          {
+            model: sequelize.models.Role,
+            as: 'roles',
+            attributes: ['name'],
+            through: { attributes: [] }
+          }
+        ]
+      }
     }
   )
   return User

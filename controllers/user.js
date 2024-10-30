@@ -24,7 +24,6 @@ class UserController extends Validator {
 
   findUserByInfo = asyncError(async (req, res, next) => {
     const { userInfo } = req.params
-    console.log(userInfo)
 
     const infoType = userInfo.split(':')[0] // phone || email
     const info = userInfo.split(':')[1]

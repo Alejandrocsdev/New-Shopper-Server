@@ -18,7 +18,7 @@ jobs:
   manage-database:
     runs-on: ubuntu-latest
 
-    env:  # Set environment variables at the job level
+    env:
       NODE_ENV: production
       MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
       MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
@@ -59,3 +59,4 @@ jobs:
           npx sequelize-cli db:drop
           npx sequelize-cli db:create
           npx sequelize-cli db:migrate
+          npx sequelize-cli db:seed:all

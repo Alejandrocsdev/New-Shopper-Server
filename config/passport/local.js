@@ -17,13 +17,7 @@ const verifyCallback = async (signInKey, password, cb) => {
   try {
     // 根據 信箱 / 電話 / 帳號 查找用戶
     const user = await User.findOne({
-      where: {
-        [Op.or]: [
-          { email: signInKey }, 
-          { phone: signInKey }, 
-          { username: signInKey }]
-      },
-      include: [{ model: Image, as: 'avatar', attributes: ['link'] }]
+      where: { [Op.or]: [{ email: signInKey }, { phone: signInKey }, { username: signInKey }] }
     })
 
     if (!user) throw new CustomError(404, 'error.wrongSignInCredential', '輸入資料錯誤')

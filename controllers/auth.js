@@ -1,5 +1,5 @@
 // 引用 Models
-const { User } = require('../models')
+const { User, Role } = require('../models')
 // 引用異步錯誤處理中間件
 const { asyncError } = require('../middlewares')
 // 自訂錯誤訊息模組
@@ -28,10 +28,12 @@ class AuthController extends Validator {
     const user = await User.findOne({ where: { refreshToken } })
 
     const { id } = encrypt.verifyToken(refreshToken, 'rt')
-
     if (!user || id !== user.id) throw new CustomError(403, 'error.signInAgain', '存取憑證刷新失敗')
 
-    const accessToken = encrypt.signAccessToken(id)
+    const { roles } = user
+    if (!roles) throw new CustomError(403, 'error.signInAgain', '查無權限角色')
+
+    const accessToken = encrypt.signAccessToken(id, roles)
 
     res.status(200).json({ message: '存取憑證刷新成功', accessToken })
   })
@@ -46,7 +48,10 @@ class AuthController extends Validator {
     await User.update({ refreshToken }, { where: { id: userId } })
     cookie.store(res, refreshToken)
 
-    const accessToken = encrypt.signAccessToken(userId)
+    const { roles } = user
+    if (!roles) throw new CustomError(403, 'error.signInAgain', '查無權限角色')
+
+    const accessToken = encrypt.signAccessToken(userId, roles)
     res.status(200).json({ message: '自動登入成功', accessToken })
   })
 
@@ -59,7 +64,10 @@ class AuthController extends Validator {
     await User.update({ refreshToken }, { where: { id: user.id } })
     cookie.store(res, refreshToken)
 
-    const accessToken = encrypt.signAccessToken(user.id)
+    const { roles } = user
+    if (!roles) throw new CustomError(403, 'error.signInAgain', '查無權限角色')
+
+    const accessToken = encrypt.signAccessToken(user.id, roles)
     res.status(200).json({ message: '登入成功', accessToken })
   })
 
@@ -73,7 +81,16 @@ class AuthController extends Validator {
       encrypt.hash(password)
     ])
 
-    const user = await User.create({ username, password: hashedPassword, phone })
+    const [user, buyerRole] = await Promise.all([
+      User.create({ username, password: hashedPassword, phone }),
+      Role.findOne({ where: { name: 'buyer' } })
+    ])
+
+    if (buyerRole) {
+      await user.addRole(buyerRole)
+    } else {
+      throw new CustomError(500, 'error.roleNotFound', '無法找到買家角色')
+    }
 
     // 刪除敏感資料
     const newUser = user.toJSON()

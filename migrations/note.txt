@@ -1,0 +1,55 @@
+1. 時間預設值
+
+created_at
+defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+updated_at
+defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP')
+
+2. 命名慣例 (model, table, column)
+
+modelName: PascalCase / singular
+tableName: snake_case / plural
+
+SQL schema 常用 snake_case
+javascript 常用 camelCase
+
+model (underscored: true)
+- columnName: camelCase
+table
+- columnName: snake_case
+
+3. 命名慣例 (migrations, seeders)
+
+migrations:
+- create-users
+- add-role-to-users
+- delete-role-from-users
+
+seeders:
+- seed-users
+
+4. Model.init (new) / sequelize.define (old)
+
+createTable
+dropTable
+
+addColumn
+removeColumn
+
+bulkInsert
+bulkDelete
+
+npx sequelize-cli model:generate --name Product --attributes name:string type:string count:integer --underscored
+npx sequelize-cli migration:generate --name create-products
+npx sequelize-cli seed:generate --name seed-products
+
+onUpdate: 'CASCADE'
+onDelete: 'CASCADE'
+
+model.reload()
+model.save()
+model.destroy()
+model.toJSON()
+model.validate()
+model.increment()
+model.decrement()

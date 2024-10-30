@@ -106,9 +106,10 @@ class Encrypt {
   }
 
   // Access JWT
-  signAccessToken(id) {
+  signAccessToken(id, rolesData) {
+    const roles = rolesData.map(role => role.name)
     try {
-      const token = jwt.sign({ id: Number(id) }, process.env.AT_SECRET, { expiresIn: '15m' })
+      const token = jwt.sign({ id: Number(id), roles }, process.env.AT_SECRET, { expiresIn: '15m' })
       return token
     } catch (error) {
       throw new CustomError(500, 'error.defaultError', '生成at憑證失敗 (Encrypt)')

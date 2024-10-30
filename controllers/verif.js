@@ -60,7 +60,7 @@ class VerifController extends Validator {
 
     // 發送簡訊
     await sendSMS({ phone, otp }, 'verify', smsType)
-    console.log(`簡訊OTP發送成功 (${smsType})`)
+
     // 成功回應
     res.status(200).json({ message: `簡訊OTP發送成功 (${smsType})` })
   })
