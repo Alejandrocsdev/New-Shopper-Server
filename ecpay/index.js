@@ -4,7 +4,7 @@ const { backUrl, frontUrl } = require('../utils')
 
 function ecPay(orderId, payload) {
   const { TotalAmount, ItemName } = payload
-console.log(`${global.ngrokUrl || backUrl}/api/ecpay/payment/result`)
+  
   const params = {
     MerchantTradeNo: encrypt.tradeNo(orderId),
     MerchantTradeDate: time.tradeDate(),

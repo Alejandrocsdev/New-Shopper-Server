@@ -5,7 +5,7 @@ const { asyncError } = require('../middlewares')
 // 自訂錯誤訊息模組
 const CustomError = require('../errors/CustomError')
 // 綠界科技參數
-const ecPay = require('../ecPay')
+const ecPay = require('../ecpay')
 
 class EcpayController {
   payment = asyncError(async (req, res, next) => {
