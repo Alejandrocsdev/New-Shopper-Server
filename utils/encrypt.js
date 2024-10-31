@@ -2,6 +2,7 @@
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
+const sha256 = require('./sha256')
 
 // 引用客製化錯誤訊息模組
 const CustomError = require('../errors/CustomError')
@@ -145,6 +146,33 @@ class Encrypt {
       return decoded
     } catch (error) {
       throw new CustomError(500, 'error.defaultError', `${error.message} (Encrypt && jsonwebtoken)`)
+    }
+  }
+
+  sha256(input) {
+    if (typeof input === 'string') {
+      return sha256(input)
+    } else {
+      throw new CustomError(500, 'error.defaultError', 'sh256 雜湊失敗')
+    }
+  }
+
+  tradeNo(orderId) {
+    const timestamp = Date.now()
+    const tradeNo = `${orderId}${timestamp}`
+    if (tradeNo.length <= 20) {
+      return tradeNo
+    } else {
+      throw new CustomError(500, 'error.defaultError', '交易號碼不可大於20位數')
+    }
+  }
+
+  NETUrlEncode(str) {
+    if (typeof str === 'string') {
+      const customEncode = str.replace(/~/g, '%7E').replace(/%20/g, '+').replace(/'/g, '%27')
+      return customEncode
+    } else {
+      throw new CustomError(500, 'error.defaultError', 'URL (.NET) 加密失敗')
     }
   }
 }

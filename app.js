@@ -35,6 +35,8 @@ const routes = require('./routes')
 const { defaultRoute, globalError } = require('./middlewares')
 // Express 中間件: 解析請求主體的 JSON 格式資料
 app.use(express.json())
+// Express 中間件: 解析請求主體的 URL 編碼格式資料 (使用擴展模式)
+app.use(express.urlencoded({ extended: true }))
 // 解析靜態資源的路徑 (本地存儲照片)
 app.use('/uploads', express.static(path.join(__dirname, 'storage', 'local', 'images')))
 // 中間件: 跨來源資源共用
