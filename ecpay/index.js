@@ -1,21 +1,18 @@
 const time = require('../utils/time')
 const encrypt = require('../utils/encrypt')
-
-// require('dotenv').config()
-
-const isProduction = process.env.NODE_ENV === 'production'
+const { backUrl, frontUrl } = require('../utils')
 
 function ecPay(orderId, payload) {
   const { TotalAmount, ItemName } = payload
-
+console.log(`${global.ngrokUrl || backUrl}/api/ecpay/payment/result`)
   const params = {
     MerchantTradeNo: encrypt.tradeNo(orderId),
     MerchantTradeDate: time.tradeDate(),
     TotalAmount,
     ItemName,
     TradeDesc: '商品訂單',
-    ReturnURL: isProduction ? process.env.ECPAY_PROD_RETURN_URL : process.env.ECPAY_DEV_RETURN_URL,
-    ClientBackURL: isProduction ? process.env.ECPAY_PROD_CLIENT_BACK_URL : process.env.ECPAY_DEV_CLIENT_BACK_URL,
+    ReturnURL: `${global.ngrokUrl || backUrl}/api/ecpay/payment/result`,
+    ClientBackURL: `${frontUrl}`,
     PlatformID: '',
     MerchantID: process.env.ECPAY_MERCHANT_ID,
     InvoiceMark: 'N',

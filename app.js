@@ -2,6 +2,8 @@
 require('dotenv').config()
 // 引用後端框架
 const express = require('express')
+// 引用 ngrok
+const ngrok = require('ngrok')
 // 建立 Express 應用程式
 const app = express()
 // 伺服器端口
@@ -52,4 +54,18 @@ app.all('*', defaultRoute)
 // 掛載全域錯誤中間件
 app.use(globalError)
 // 監聽伺服器運行
-app.listen(port, () => console.info(`Express server running on port: ${port}`))
+app.listen(port, async () => {
+  console.info(`Express server running on port: ${port}`)
+
+  if (process.env.NODE_ENV === 'development') {
+    try {
+      global.ngrokUrl = await ngrok.connect({
+        authtoken: process.env.NGROK_AUTH_TOKEN,
+        addr: port,
+      })
+      console.info(`ngrok tunnel open at: ${global.ngrokUrl}`)
+    } catch (error) {
+      console.error('Error starting ngrok:', error)
+    }
+  }
+})
