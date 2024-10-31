@@ -56,7 +56,7 @@ app.use(globalError)
 // 監聽伺服器運行
 app.listen(port, async () => {
   console.info(`Express server running on port: ${port}`)
-
+  console.info('NODE_ENV:', process.env.NODE_ENV === 'development')
   if (process.env.NODE_ENV === 'development') {
     try {
       global.ngrokUrl = await ngrok.connect({
