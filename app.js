@@ -2,6 +2,8 @@
 require('dotenv').config()
 // 引用後端框架
 const express = require('express')
+// 引用 helmet
+const helmet = require('helmet')
 // 引用 ngrok
 const ngrok = require('ngrok')
 // 建立 Express 應用程式
@@ -39,6 +41,24 @@ const { defaultRoute, globalError } = require('./middlewares')
 app.use(express.json())
 // Express 中間件: 解析請求主體的 URL 編碼格式資料 (使用擴展模式)
 app.use(express.urlencoded({ extended: true }))
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'", // Allow inline scripts if absolutely necessary
+        "https://payment-stage.ecpay.com.tw",
+        "https://gpayment-stage.ecpay.com.tw",
+        // Add other sources that ECPay requires here if necessary
+      ],
+      frameSrc: [
+        "https://payment-stage.ecpay.com.tw",
+        "https://gpayment-stage.ecpay.com.tw"
+      ],
+    },
+  })
+);
 // 解析靜態資源的路徑 (本地存儲照片)
 app.use('/uploads', express.static(path.join(__dirname, 'storage', 'local', 'images')))
 // 中間件: 跨來源資源共用
@@ -61,7 +81,7 @@ app.listen(port, async () => {
     try {
       global.ngrokUrl = await ngrok.connect({
         authtoken: process.env.NGROK_AUTH_TOKEN,
-        addr: port,
+        addr: port
       })
       console.info(`ngrok tunnel open at: ${global.ngrokUrl}`)
     } catch (error) {
