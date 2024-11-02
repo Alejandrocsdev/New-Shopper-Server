@@ -46,6 +46,7 @@ app.use((req, res, next) => {
   res.locals.cspNonce = crypto.randomBytes(16).toString('base64')
   next()
 })
+console.log('process.env.ECPAY_API', process.env.ECPAY_API)
 app.use(
   helmet.contentSecurityPolicy({
     directives: { formAction: [process.env.ECPAY_API] }
