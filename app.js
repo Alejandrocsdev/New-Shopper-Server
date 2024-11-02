@@ -4,20 +4,15 @@ require('dotenv').config()
 const express = require('express')
 // 引用 helmet
 const helmet = require('helmet')
-const crypto = require('crypto')
 // 引用 ngrok
 const ngrok = require('ngrok')
 // 建立 Express 應用程式
 const app = express()
-app.use((req, res, next) => {
-  // Log headers added by Helmet
-  console.log('2Response Headers:', res.getHeaders())
-  next()
-})
 // 伺服器端口
 const port = process.env.PORT
 // 引用 node.js 內建模組
 const path = require('path')
+const crypto = require('crypto')
 // 引用 CORS 中間件
 const cors = require('cors')
 // 引用前端網域
@@ -54,15 +49,10 @@ app.use((req, res, next) => {
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
-      scriptSrc: [(req, res) => `'nonce-${res.locals.cspNonce}'`]
+      scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`]
     }
   })
 )
-app.use((req, res, next) => {
-  // Log headers added by Helmet
-  console.log('2Response Headers:', res.getHeaders())
-  next()
-})
 // 解析靜態資源的路徑 (本地存儲照片)
 app.use('/uploads', express.static(path.join(__dirname, 'storage', 'local', 'images')))
 // 中間件: 跨來源資源共用
