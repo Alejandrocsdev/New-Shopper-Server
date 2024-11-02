@@ -9,6 +9,11 @@ const crypto = require('crypto')
 const ngrok = require('ngrok')
 // 建立 Express 應用程式
 const app = express()
+app.use((req, res, next) => {
+  // Log headers added by Helmet
+  console.log('2Response Headers:', res.getHeaders())
+  next()
+})
 // 伺服器端口
 const port = process.env.PORT
 // 引用 node.js 內建模組
@@ -46,15 +51,16 @@ app.use((req, res, next) => {
   res.locals.cspNonce = crypto.randomBytes(16).toString('base64')
   next()
 })
-console.log('process.env.ECPAY_API', process.env.ECPAY_API)
-// app.use(
-//   helmet.contentSecurityPolicy({
-//     directives: { formAction: [process.env.ECPAY_API] }
-//   })
-// )
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      scriptSrc: [(req, res) => `'nonce-${res.locals.cspNonce}'`]
+    }
+  })
+)
 app.use((req, res, next) => {
   // Log headers added by Helmet
-  console.log('Response Headers:', res.getHeaders())
+  console.log('2Response Headers:', res.getHeaders())
   next()
 })
 // 解析靜態資源的路徑 (本地存儲照片)
