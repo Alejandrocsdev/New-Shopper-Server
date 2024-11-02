@@ -47,11 +47,11 @@ app.use((req, res, next) => {
   next()
 })
 console.log('process.env.ECPAY_API', process.env.ECPAY_API)
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: { formAction: [process.env.ECPAY_API] }
-  })
-)
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: { formAction: [process.env.ECPAY_API] }
+//   })
+// )
 app.use((req, res, next) => {
   // Log headers added by Helmet
   console.log('Response Headers:', res.getHeaders())
