@@ -48,11 +48,14 @@ app.use((req, res, next) => {
 })
 app.use(
   helmet.contentSecurityPolicy({
-    directives: {
-      scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`]
-    }
+    directives: { formAction: [process.env.ECPAY_API] }
   })
 )
+app.use((req, res, next) => {
+  // Log headers added by Helmet
+  console.log('Response Headers:', res.getHeaders())
+  next()
+})
 // 解析靜態資源的路徑 (本地存儲照片)
 app.use('/uploads', express.static(path.join(__dirname, 'storage', 'local', 'images')))
 // 中間件: 跨來源資源共用
@@ -70,7 +73,6 @@ app.use(globalError)
 // 監聽伺服器運行
 app.listen(port, async () => {
   console.info(`Express server running on port: ${port}`)
-  console.info('NODE_ENV:', process.env.NODE_ENV === 'development')
   if (process.env.NODE_ENV === 'development') {
     try {
       global.ngrokUrl = await ngrok.connect({

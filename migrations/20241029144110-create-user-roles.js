@@ -11,6 +11,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       user_id: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'users', // Matches the 'users' table in the User model
@@ -20,6 +21,7 @@ module.exports = {
         onDelete: 'CASCADE'
       },
       role_id: {
+        allowNull: false,
         type: Sequelize.INTEGER, 
         references: {
           model: 'roles', // Matches the 'roles' table in the Role model

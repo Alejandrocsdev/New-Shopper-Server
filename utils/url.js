@@ -3,7 +3,4 @@ const isProduction = process.env.NODE_ENV === 'production'
 const backUrl = isProduction ? process.env.BACK_PROD_BASE_URL + '/api' : process.env.BACK_DEV_BASE_URL + '/api'
 const frontUrl = isProduction ? process.env.FRONT_PROD_BASE_URL : process.env.FRONT_DEV_BASE_URL
 
-console.info('backUrl:', backUrl)
-console.info('frontUrl:', frontUrl)
-
 module.exports = { backUrl, frontUrl }

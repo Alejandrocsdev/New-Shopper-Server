@@ -1,0 +1,34 @@
+users
+
+products
+- name
+- price
+- description
+- stock
+
+orders
+- user_id
+- total_amount
+- status (pending, paid, canceled)
+
+order_items
+- order_id
+- product_id
+- quantity
+- price
+
+payments
+- order_id
+- amount
+- method
+- status
+- transaction_id
+- payment_date
+- response_code / response_message
+
+transactions
+- payment_id
+- status
+- request_data
+- response_data
+- timestamp

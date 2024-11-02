@@ -13,18 +13,6 @@ class EcpayController {
 
     const ecPayParams = ecPay(orderId, { TotalAmount, ItemName })
 
-    const formHtml = `
-    <html>
-      <body onload="document.forms[0].submit()">
-        <form method="POST" action="https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5">
-          ${Object.entries(ecPayParams).map(
-            ([key, value]) => `<input type="hidden" name="${key}" value="${value}" />`
-          ).join('')}
-        </form>
-      </body>
-    </html>
-  `
-
     res.status(200).json({ message: '前往綠界支付成功', ecPayParams })
   })
 
