@@ -10,7 +10,11 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       phone: {
-        allowNull: false,
+        allowNull: true,
+        type: Sequelize.STRING
+      },
+      email: {
+        allowNull: true,
         type: Sequelize.STRING
       },
       otp: {

@@ -45,6 +45,10 @@ const emailOptions = {
   notify: (data) => ({
     ...loadTemplate('notify', { username: data.username, date: data.date }),
     subject: '您的瞎皮爾購物密碼已經變更'
+  }),
+  otp: (data) => ({
+    ...loadTemplate('otp', { otp: data.otp }),
+    subject: '您的瞎皮爾驗證碼'
   })
 }
 

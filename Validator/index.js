@@ -6,11 +6,12 @@ const CustomError = require('../errors/CustomError')
 class Validator {
   constructor(rules) {
     this.schemaParts = {
-      password: Joi.string().min(8).max(16).regex(/[a-z]/).regex(/[A-Z]/).regex(/\d/).required(),
-      phone: Joi.string().regex(/^09/).length(10).required(),
+      username: Joi.string().min(8).max(16),
+      password: Joi.string().min(8).max(16).regex(/[a-z]/).regex(/[A-Z]/).regex(/\d/),
+      phone: Joi.string().regex(/^09/).length(10),
       lang: Joi.string().valid('zh', 'en', 'es').required(),
       otp: Joi.string().length(6).required(),
-      email: Joi.string().email().required(),
+      email: Joi.string().email(),
       isReset: Joi.boolean().required()
     }
 

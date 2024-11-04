@@ -20,7 +20,7 @@ const jwtAuth = async (req, res, next) => {
     const currentTime = Math.floor(Date.now() / 1000)
     if (payload.exp && payload.exp < currentTime) throw new CustomError(401, 'error.signInAgain', '(4)存取憑證已過期')
 
-    const user = await User.findByPk(payload.id, { attributes: ['id', 'username'] })
+    const user = await User.findByPk(payload.id, { attributes: ['id', 'username', 'email', 'phone', 'usernameModified'] })
     if (!user) throw new CustomError(403, 'error.signInAgain', '(5)查無用戶')
 
     req.user = user.toJSON()

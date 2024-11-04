@@ -7,7 +7,11 @@ module.exports = (sequelize, DataTypes) => {
   Otp.init(
     {
       phone: {
-        allowNull: false,
+        allowNull: true,
+        type: DataTypes.STRING
+      },
+      email: {
+        allowNull: true,
         type: DataTypes.STRING
       },
       otp: {

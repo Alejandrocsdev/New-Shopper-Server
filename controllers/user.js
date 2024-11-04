@@ -14,7 +14,8 @@ const { uploadImage, deleteImage } = require('../storage')
 const storageType = process.env.STORAGE_TYPE || 'local'
 // 需驗證Body路由
 const rules = {
-  putPwdByInfo: ['password']
+  putPwdByInfo: ['password'],
+  putUser: ['username', 'password', 'email', 'phone']
 }
 
 class UserController extends Validator {
@@ -50,7 +51,36 @@ class UserController extends Validator {
     const info = userInfo.split(':')[1]
 
     await User.update({ password: hashedPassword }, { where: { [infoType]: info } })
-    res.status(200).json({ message: '密碼更新成功' })
+    res.status(200).json({ message: '用戶密碼更新成功' })
+  })
+
+  putUser = asyncError(async (req, res, next) => {
+    // 驗證請求主體
+    this.validateBody(req.body, 'putUser')
+    const { username, password, email, phone } = req.body
+    const { userId } = req.params
+
+    const updateData = {}
+    if (username !== null && username !== undefined) {
+      updateData.username = username
+      updateData.usernameModified = true
+    }
+    if (password !== null && password !== undefined)
+      updateData.password = await encrypt.hash(password)
+    if (email !== null && email !== undefined) updateData.email = email
+    if (phone !== null && phone !== undefined) updateData.phone = phone
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ message: '無更新資料' })
+    }
+    
+    await User.update(updateData, { where: { id: userId } })
+    const updatedUser = await User.findOne({
+      where: { id: userId },
+      attributes: ['id', 'username', 'email', 'phone', 'usernameModified']
+    })
+
+    res.status(200).json({ message: '用戶資料更新成功', user: updatedUser })
   })
 
   putUserImage = asyncError(async (req, res, next) => {

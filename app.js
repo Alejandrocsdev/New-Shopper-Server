@@ -4,15 +4,16 @@ require('dotenv').config()
 const express = require('express')
 // 引用 helmet
 // const helmet = require('helmet')
+// 引用 node.js 內建模組 crypto
+// const crypto = require('crypto')
 // 引用 ngrok
 const ngrok = require('ngrok')
 // 建立 Express 應用程式
 const app = express()
 // 伺服器端口
 const port = process.env.PORT
-// 引用 node.js 內建模組
+// 引用 node.js 內建模組 path
 const path = require('path')
-const crypto = require('crypto')
 // 引用 CORS 中間件
 const cors = require('cors')
 // 引用前端網域
@@ -42,11 +43,6 @@ const { defaultRoute, globalError } = require('./middlewares')
 app.use(express.json())
 // Express 中間件: 解析請求主體的 URL 編碼格式資料 (使用擴展模式)
 app.use(express.urlencoded({ extended: true }))
-app.use((req, res, next) => {
-  console.log('Current headers:', res.getHeaders())
-  res.setHeader('Cache-Control', 'no-store')
-  next()
-})
 // app.use((req, res, next) => {
 //   res.locals.cspNonce = crypto.randomBytes(16).toString('base64')
 //   next()
@@ -54,7 +50,7 @@ app.use((req, res, next) => {
 // app.use(
 //   helmet.contentSecurityPolicy({
 //     directives: {
-//       scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`]
+//       scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`, process.env.ECPAY_API]
 //     }
 //   })
 // )
