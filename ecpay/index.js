@@ -67,6 +67,8 @@ class Ecpay {
       ExtraData: lang
     }
 
+    console.log('ServerReplyURL', params.ServerReplyURL)
+
     return this.macValue(params, 'logistics')
   }
 
