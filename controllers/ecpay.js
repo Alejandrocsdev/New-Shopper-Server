@@ -1,17 +1,19 @@
 // 引用 Models
-// const {  } = require('../models')
+const { Store } = require('../models')
 // 引用異步錯誤處理中間件
 const { asyncError } = require('../middlewares')
 // 自訂錯誤訊息模組
 const CustomError = require('../errors/CustomError')
+// 引用 網址 模組
+const { frontUrl } = require('../utils')
 // 綠界科技參數
-const ecPay = require('../ecpay')
+const ecpay = require('../ecpay')
 
 class EcpayController {
   payment = asyncError(async (req, res, next) => {
     const { orderId, TotalAmount, ItemName } = req.query
 
-    const ecPayParams = ecPay(orderId, { TotalAmount, ItemName })
+    const ecPayParams = ecpay.payment(orderId, { TotalAmount, ItemName })
 
     res.status(200).json({ message: '前往綠界支付成功', ecPayParams })
   })
@@ -39,25 +41,66 @@ class EcpayController {
 
     console.log(req.body)
 
-    // CustomField1: '',
-    // CustomField2: '',
-    // CustomField3: '',
-    // CustomField4: '',
-    // MerchantID: '3002607',
-    // MerchantTradeNo: '123451730388671047',
-    // PaymentDate: '2024/10/31 23:31:22',
-    // PaymentType: 'WebATM_LAND',
-    // PaymentTypeChargeFee: '3',
-    // RtnCode: '1',
-    // RtnMsg: '交易成功',
-    // SimulatePaid: '0',
-    // StoreID: '',
-    // TradeAmt: '256',
-    // TradeDate: '2024/10/31 23:31:11',
-    // TradeNo: '2410312331118067',
-    // CheckMacValue: 'B7E0992356DF0E3C8CD60FC8FA2AF523C351F30DE9449CF24EE88C9513412D1D'
-
     return res.status(200).send('1|OK')
+  })
+
+  getStoreList = asyncError(async (req, res, next) => {
+    const { CvsType } = req.query
+
+    const ecPayParams = ecpay.storeList(CvsType)
+
+    res.status(200).json({ message: '取得綠界門市清單成功', ecPayParams })
+  })
+
+  getStore = asyncError(async (req, res, next) => {
+    const { userId, LogisticsSubType, lang } = req.query
+
+    const ecPayParams = ecpay.expressMap(userId, LogisticsSubType, lang)
+
+    res.status(200).json({ message: '選取綠界門市成功 (電子地圖)', ecPayParams })
+  })
+
+  getStoreResult = asyncError(async (req, res, next) => {
+    const {
+      MerchantID,
+      MerchantTradeNo,
+      LogisticsSubType,
+      CVSStoreID,
+      CVSStoreName,
+      CVSAddress,
+      CVSTelephone,
+      CVSOutSide,
+      ExtraData
+    } = req.body
+
+    console.log(req.body)
+
+    const lang = ExtraData
+    const extractedUserId = MerchantTradeNo.split('-')[0]
+    const existingStores = await Store.findAll({ where: { userId: extractedUserId } })
+    const isDefault = existingStores.length === 0
+
+    const [store, created] = await Store.findOrCreate({
+      where: {
+        userId: extractedUserId,
+        cvsStoreId: CVSStoreID
+      },
+      defaults: {
+        logisticsSubType: LogisticsSubType,
+        cvsStoreName: CVSStoreName,
+        cvsAddress: CVSAddress,
+        cvsTelephone: CVSTelephone,
+        isDefault
+      }
+    })
+
+    if (!created) {
+      console.log(`Store with ID ${CVSStoreID} already exists for user ${extractedUserId}.`)
+    } else {
+      console.log(`New store created for user ${extractedUserId}.`)
+    }
+
+    return res.status(200).redirect(`${frontUrl}/${lang}/profile/address`)
   })
 }
 

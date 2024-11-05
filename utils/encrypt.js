@@ -157,6 +157,14 @@ class Encrypt {
     }
   }
 
+  md5(input) {
+    if (typeof input === 'string') {
+      return crypto.createHash('md5').update(input).digest('hex')
+    } else {
+      throw new CustomError(500, 'error.defaultError', 'md5 雜湊失敗')
+    }
+  }
+
   tradeNo(orderId) {
     const timestamp = Date.now()
     const tradeNo = `${orderId}${timestamp}`

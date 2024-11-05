@@ -19,7 +19,7 @@ const cors = require('cors')
 // 引用前端網域
 const { frontUrl } = require('./utils')
 // 允許來源
-const allowedOrigins = [frontUrl]
+const allowedOrigins = [frontUrl, process.env.ECPAY_PAYMENT_API, process.env.ECPAY_LOGISTICS_API]
 // 設定 CORS 的選項，允許來自特定來源的請求，並且允許攜帶憑證
 const corsOptions = {
   origin: function (origin, callback) {

@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: 'role_id',
         as: 'roles'
       })
+      User.hasMany(models.Store, {
+        foreignKey: 'user_id',
+        as: 'stores'
+      })
     }
   }
   User.init(
@@ -74,6 +78,11 @@ module.exports = (sequelize, DataTypes) => {
             as: 'roles',
             attributes: ['name'],
             through: { attributes: [] }
+          },
+          {
+            model: sequelize.models.Store,
+            as: 'stores',
+            attributes: ['id', 'userId', 'cvsStoreId', 'logisticsSubType', 'cvsStoreName', 'cvsAddress', 'cvsTelephone', 'isDefault']
           }
         ]
       }
