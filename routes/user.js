@@ -12,7 +12,7 @@ router.param('userId', checkId)
 
 router.put('/', jwtAuth, upload(storageType), userController.putUserImage)
 router.get('/find/:userInfo', userController.findUserByInfo)
-router.put('/:userId', userController.putUser)
+router.put('/:userId', jwtAuth, userController.putUser)
 router.put('/pwd/:userInfo', userController.putPwdByInfo)
 
 module.exports = router
