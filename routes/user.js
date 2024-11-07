@@ -17,5 +17,6 @@ router.put('/:userId', jwtAuth, userController.putUser)
 router.put('/pwd/:userInfo', userController.putPwdByInfo)
 router.post('/role', jwtAuth, userController.postUserRole)
 router.post('/cart/:productId', jwtAuth, userController.postUserCart)
+router.delete('/cart/:productId', jwtAuth, userController.deleteUserCart)
 
 module.exports = router

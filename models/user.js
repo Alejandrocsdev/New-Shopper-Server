@@ -117,7 +117,14 @@ module.exports = (sequelize, DataTypes) => {
                   {
                     model: sequelize.models.Product,
                     as: 'product',
-                    attributes: ['name', 'price']
+                    attributes: ['name', 'price'],
+                    include: [
+                      {
+                        model: sequelize.models.Image,
+                        as: 'image',
+                        attributes: ['link']
+                      }
+                    ]
                   }
                 ]
               }

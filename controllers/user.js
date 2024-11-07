@@ -1,5 +1,5 @@
 // 引用 Models
-const { User, Image, Role, Cart, CartItem } = require('../models')
+const { User, Image, Role, Cart, CartItem, Product } = require('../models')
 // 引用異步錯誤處理中間件
 const { asyncError } = require('../middlewares')
 // 自訂錯誤訊息模組
@@ -160,7 +160,62 @@ class UserController extends Validator {
       await cartItem.save()
     }
 
-    res.status(200).json({ message: '加入購物車成功', cartItem })
+    const cartItems = await CartItem.findAll({
+      where: { cartId: cart.id },
+      include: [
+        {
+          model: Product,
+          as: 'product',
+          attributes: ['name', 'price'],
+          include: [
+            {
+              model: Image,
+              as: 'image',
+              attributes: ['link']
+            }
+          ]
+        }
+      ],
+      order: [['createdAt', 'DESC']]
+    })
+
+    res.status(200).json({ message: '商品加入購物車成功', cartItems })
+  })
+
+  deleteUserCart = asyncError(async (req, res, next) => {
+    const { user } = req
+    if (!user) throw new CustomError(401, 'error.signInAgain', '用戶授權失敗')
+
+    const { productId } = req.params
+
+    const cart = await Cart.findOne({
+      where: { userId: user.id }
+    })
+
+    await CartItem.destroy({
+      where: { cartId: cart.id, productId }
+    })
+
+    const cartItems = await CartItem.findAll({
+      where: { cartId: cart.id },
+      include: [
+        {
+          model: Product,
+          as: 'product',
+          attributes: ['name', 'price'],
+          include: [
+            {
+              model: Image,
+              as: 'image',
+              attributes: ['link']
+            }
+          ]
+        }
+      ],
+      order: [['createdAt', 'DESC']]
+    })
+
+    res.status(200).json({ message: '商品移除購物車成功', cartItems })
   })
 }
 

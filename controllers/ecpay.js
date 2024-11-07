@@ -100,7 +100,7 @@ class EcpayController {
       console.log(`New store created for user ${extractedUserId}.`)
     }
 
-    return res.status(200).redirect(`${frontUrl}/${lang}/profile/address`)
+    return res.status(200).redirect(`${frontUrl}/${lang}/profile/address?success=true`)
   })
 }
 
