@@ -1,5 +1,5 @@
 // 引用 Models
-const { User, Image, Role } = require('../models')
+const { User, Image, Role, Cart, CartItem } = require('../models')
 // 引用異步錯誤處理中間件
 const { asyncError } = require('../middlewares')
 // 自訂錯誤訊息模組
@@ -132,6 +132,35 @@ class UserController extends Validator {
     })
 
     res.status(200).json({ message: '新增用戶角色', roles: rawUser.roles })
+  })
+
+  postUserCart = asyncError(async (req, res, next) => {
+    const { user } = req
+    if (!user) throw new CustomError(401, 'error.signInAgain', '用戶授權失敗')
+
+    const { productId } = req.params
+    const { quantity, unitPrice } = req.body
+
+    const [cart, cartCreated] = await Cart.findOrCreate({
+      where: { userId: user.id }
+    })
+
+    const [cartItem, itemCreated] = await CartItem.findOrCreate({
+      where: { cartId: cart.id, productId },
+      defaults: {
+        quantity,
+        unitPrice,
+        totalPrice: quantity * unitPrice
+      }
+    })
+
+    if (!itemCreated) {
+      cartItem.quantity += quantity
+      cartItem.totalPrice = cartItem.quantity * cartItem.unitPrice
+      await cartItem.save()
+    }
+
+    res.status(200).json({ message: '加入購物車成功', cartItem })
   })
 }
 

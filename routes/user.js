@@ -9,11 +9,13 @@ const storageType = process.env.STORAGE_TYPE || 'local'
 
 // 驗證參數 userId
 router.param('userId', checkId)
+router.param('productId', checkId)
 
 router.put('/', jwtAuth, upload(storageType), userController.putUserImage)
 router.get('/find/:userInfo', userController.findUserByInfo)
 router.put('/:userId', jwtAuth, userController.putUser)
 router.put('/pwd/:userInfo', userController.putPwdByInfo)
 router.post('/role', jwtAuth, userController.postUserRole)
+router.post('/cart/:productId', jwtAuth, userController.postUserCart)
 
 module.exports = router

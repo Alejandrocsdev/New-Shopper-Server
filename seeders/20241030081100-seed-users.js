@@ -20,12 +20,14 @@ module.exports = {
     const hashedPassword = await encrypt.hash(password)
     const usersData = usernames.map((username) => ({
       username,
+      username_modified: false,
       password: hashedPassword
     }))
 
     const envUserPassword = await encrypt.hash(process.env.OWNER_PASSWORD)
     usersData.push({
       username: process.env.OWNER_USERNAME,
+      username_modified: true,
       password: envUserPassword
     })
 

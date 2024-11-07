@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'user_id',
         as: 'products'
       })
+      User.hasOne(models.Cart, {
+        foreignKey: 'user_id',
+        as: 'cart'
+      })
     }
   }
   User.init(
@@ -97,6 +101,25 @@ module.exports = (sequelize, DataTypes) => {
                 model: sequelize.models.Image,
                 as: 'image',
                 attributes: ['link']
+              }
+            ]
+          },
+          {
+            model: sequelize.models.Cart,
+            as: 'cart',
+            attributes: ['id', 'userId'],
+            include: [
+              {
+                model: sequelize.models.CartItem,
+                as: 'items',
+                attributes: ['id', 'productId', 'quantity', 'unitPrice', 'totalPrice'],
+                include: [
+                  {
+                    model: sequelize.models.Product,
+                    as: 'product',
+                    attributes: ['name', 'price']
+                  }
+                ]
               }
             ]
           }

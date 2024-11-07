@@ -43,7 +43,7 @@ class ProductController extends Validator {
     })
 
     res.status(200).json({
-      message: '取得商品成功',
+      message: '取得商品成功 (多頁)',
       data: {
         totalItems: count,
         totalPages: Math.ceil(count / limit),
@@ -51,6 +51,23 @@ class ProductController extends Validator {
         products
       }
     })
+  })
+
+  getProduct = asyncError(async (req, res, next) => {
+    const { productId } = req.params
+    const product = await Product.findOne({
+      where: { id: productId },
+      include: [
+        {
+          model: Image,
+          as: 'image',
+          attributes: ['link']
+        }
+      ]
+    })
+    if (!product) throw new CustomError(400, 'error.productNotFound', '查無商品')
+
+    res.status(200).json({ message: '取得商品成功 (單一)', product })
   })
 }
 
