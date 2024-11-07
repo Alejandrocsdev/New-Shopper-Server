@@ -4,8 +4,8 @@ module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
       User.hasOne(models.Image, {
-        foreignKey: 'entityId',
-        scope: { entityType: 'user' },
+        foreignKey: 'entity_id',
+        scope: { entity_type: 'user' },
         as: 'avatar'
       })
       User.belongsToMany(models.Role, {
@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Store, {
         foreignKey: 'user_id',
         as: 'stores'
+      })
+      User.hasMany(models.Product, {
+        foreignKey: 'user_id',
+        as: 'products'
       })
     }
   }
@@ -83,6 +87,18 @@ module.exports = (sequelize, DataTypes) => {
             model: sequelize.models.Store,
             as: 'stores',
             attributes: ['id', 'userId', 'cvsStoreId', 'logisticsSubType', 'cvsStoreName', 'cvsAddress', 'cvsTelephone', 'isDefault']
+          },
+          {
+            model: sequelize.models.Product,
+            as: 'products',
+            attributes: ['id', 'name', 'description', 'price', 'stock'],
+            include: [
+              {
+                model: sequelize.models.Image,
+                as: 'image',
+                attributes: ['link']
+              }
+            ]
           }
         ]
       }

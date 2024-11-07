@@ -24,6 +24,7 @@ const jwtAuth = async (req, res, next) => {
     if (!user) throw new CustomError(403, 'error.signInAgain', '(5)查無用戶')
 
     req.user = user.toJSON()
+    req.rawUser = user
     next()
   } catch (err) {
     next(err)

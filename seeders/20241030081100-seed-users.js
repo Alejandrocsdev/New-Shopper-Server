@@ -4,7 +4,15 @@
 
 const { encrypt } = require('../utils')
 
-const usernames = ['test_buyer', 'test_seller', 'test_editor', 'test_viewer']
+const usernames = [
+  'test_buyer',
+  'test_seller',
+  'test_editor',
+  'test_viewer',
+  'seller_01',
+  'seller_02',
+  'seller_03'
+]
 const password = 'Test1234'
 
 module.exports = {

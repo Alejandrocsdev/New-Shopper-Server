@@ -2,13 +2,27 @@
 const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class Product extends Model {
-    static associate(models) {}
+    static associate(models) {
+      Product.hasOne(models.Image, {
+        foreignKey: 'entity_id',
+        scope: { entity_type: 'product' },
+        as: 'image'
+      })
+      Product.belongsTo(models.User, {
+        foreignKey: 'user_id',
+        as: 'user'
+      })
+    }
   }
   Product.init(
     {
       name: {
         allowNull: false,
         type: DataTypes.STRING
+      },
+      userId: {
+        allowNull: false,
+        type: DataTypes.INTEGER
       },
       description: {
         allowNull: false,
@@ -25,10 +39,6 @@ module.exports = (sequelize, DataTypes) => {
       stock: {
         allowNull: false,
         type: DataTypes.INTEGER
-      },
-      image: {
-        allowNull: false,
-        type: DataTypes.STRING
       }
     },
     {

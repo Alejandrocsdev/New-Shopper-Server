@@ -1,5 +1,5 @@
 // 引用 Models
-const { User, Image } = require('../models')
+const { User, Image, Role } = require('../models')
 // 引用異步錯誤處理中間件
 const { asyncError } = require('../middlewares')
 // 自訂錯誤訊息模組
@@ -73,7 +73,7 @@ class UserController extends Validator {
     if (Object.keys(updateData).length === 0) {
       return res.status(400).json({ message: '無更新資料' })
     }
-    
+
     await User.update(updateData, { where: { id: userId } })
     const updatedUser = await User.findOne({
       where: { id: userId },
@@ -110,6 +110,28 @@ class UserController extends Validator {
     // await Image.upsert({ link, deleteData, entityId: user.id, entityType: 'user' })
 
     res.status(200).json({ message: '用戶頭像更新成功', link })
+  })
+
+  postUserRole = asyncError(async (req, res, next) => {
+    const { rawUser } = req
+
+    if (!rawUser) throw new CustomError(401, 'error.signInAgain', '用戶授權失敗')
+
+    const { role } = req.body
+
+    const userRole = await Role.findOne({ where: { name: role } })
+
+    await rawUser.addRole(userRole)
+
+    await rawUser.reload({
+      include: {
+        model: Role,
+        as: 'roles',
+        attributes: ['name']
+      }
+    })
+
+    res.status(200).json({ message: '新增用戶角色', roles: rawUser.roles })
   })
 }
 

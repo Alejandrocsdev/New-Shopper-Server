@@ -4,359 +4,314 @@
     "description": "您每日使用的理想背包，適合在森林中散步，並配有15吋筆電隔層。",
     "category": "男裝",
     "price": 110,
-    "stock": 120,
-    "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg"
+    "stock": 120
   },
   {
     "name": "男士休閒修身T恤",
     "description": "修身款式，對比色長袖輕便面料，透氣舒適，經典休閒風格。",
     "category": "男裝",
     "price": 22,
-    "stock": 259,
-    "image": "https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg"
+    "stock": 259
   },
   {
     "name": "男士棉質夾克",
     "description": "適合春秋冬的戶外夾克，可用於工作、登山、騎行等戶外活動。",
     "category": "男裝",
     "price": 56,
-    "stock": 500,
-    "image": "https://fakestoreapi.com/img/71li-ujtlUL._AC_UX679_.jpg"
+    "stock": 500
   },
   {
     "name": "男士休閒修身外套",
     "description": "顏色可能因屏幕和實際情況而略有不同，請參考產品描述中的詳細尺寸資訊。",
     "category": "男裝",
     "price": 16,
-    "stock": 430,
-    "image": "https://fakestoreapi.com/img/71YXzeOuslL._AC_UY879_.jpg"
+    "stock": 430
   },
   {
     "name": "John Hardy 女士 Naga 金銀龍手鍊",
     "description": "來自我們的 Legends 系列，Naga 龍靈感源於保護海洋珍珠的神話水龍。",
     "category": "珠寶",
     "price": 695,
-    "stock": 400,
-    "image": "https://fakestoreapi.com/img/71pWzhdJNwL._AC_UL640_QL65_ML3_.jpg"
+    "stock": 400
   },
   {
     "name": "純金微鑲手鍊",
     "description": "滿意保證，30天內可退換貨。設計和銷售於美國，品質保證。",
     "category": "珠寶",
     "price": 168,
-    "stock": 70,
-    "image": "https://fakestoreapi.com/img/61sbMiUnoGL._AC_UL640_QL65_ML3_.jpg"
+    "stock": 70
   },
   {
     "name": "鍍白金公主切割戒指",
     "description": "經典婚禮訂婚鑽石戒指，適合為她的承諾增添光彩，送給摯愛的最佳禮物。",
     "category": "珠寶",
     "price": 10,
-    "stock": 400,
-    "image": "https://fakestoreapi.com/img/71YAIFU48IL._AC_UL640_QL65_ML3_.jpg"
+    "stock": 400
   },
   {
     "name": "Pierced Owl 玫瑰金不銹鋼雙層耳環",
     "description": "玫瑰金鍍層雙喇叭耳環，316L不銹鋼製成。",
     "category": "珠寶",
     "price": 11,
-    "stock": 100,
-    "image": "https://fakestoreapi.com/img/51UDEzMJVpL._AC_UL640_QL65_ML3_.jpg"
+    "stock": 100
   },
   {
     "name": "WD 2TB 行動硬碟 - USB 3.0",
     "description": "USB 3.0 和 USB 2.0 相容，快速資料傳輸，高容量，適用於 Windows 10/8/7。",
     "category": "電子產品",
     "price": 64,
-    "stock": 203,
-    "image": "https://fakestoreapi.com/img/61IBBVJvSDL._AC_SY879_.jpg"
+    "stock": 203
   },
   {
     "name": "SanDisk SSD PLUS 1TB 內建固態硬碟 - SATA III 6 Gb/s",
     "description": "簡單升級，適合提升開機速度、關機速度，適合日常使用。",
     "category": "電子產品",
     "price": 109,
-    "stock": 470,
-    "image": "https://fakestoreapi.com/img/61U7T1koQqL._AC_SX679_.jpg"
+    "stock": 470
   },
   {
     "name": "Silicon Power 256GB SSD 3D NAND",
     "description": "3D NAND 快速傳輸，提升系統效能，支持 TRIM、垃圾回收技術等。",
     "category": "電子產品",
     "price": 109,
-    "stock": 319,
-    "image": "https://fakestoreapi.com/img/71kWymZ+c+L._AC_SX679_.jpg"
+    "stock": 319
   },
   {
     "name": "WD 4TB 遊戲硬碟 - 適用於 Playstation 4",
     "description": "擴展 PS4 遊戲體驗，便攜且易於設置，三年保固。",
     "category": "電子產品",
     "price": 114,
-    "stock": 400,
-    "image": "https://fakestoreapi.com/img/61mtL65D4cL._AC_SX679_.jpg"
+    "stock": 400
   },
   {
     "name": "Acer SB220Q 21.5 吋全高清 IPS 超薄顯示器",
     "description": "21.5 吋全高清寬螢幕顯示器，IPS 面板，75Hz 刷新率，零邊框設計。",
     "category": "電子產品",
     "price": 599,
-    "stock": 250,
-    "image": "https://fakestoreapi.com/img/81QpkIctqPL._AC_SX679_.jpg"
+    "stock": 250
   },
   {
     "name": "Samsung 49 吋 CHG90 144Hz 曲面遊戲顯示器",
     "description": "49 吋超寬 32:9 曲面螢幕，量子點技術，144Hz 刷新率，1ms 快速響應。",
     "category": "電子產品",
     "price": 1000,
-    "stock": 140,
-    "image": "https://fakestoreapi.com/img/81Zt42ioCgL._AC_SX679_.jpg"
+    "stock": 140
   },
   {
     "name": "BIYLACLESEN 女士三合一滑雪夾克",
     "description": "此夾克為美國標準尺碼，建議選擇您常穿的尺碼，內裡可拆，適應不同天氣。",
     "category": "女裝",
     "price": 57,
-    "stock": 235,
-    "image": "https://fakestoreapi.com/img/51Y5NI-I5jL._AC_UX679_.jpg"
+    "stock": 235
   },
   {
     "name": "Lock and Love 女士可拆帽仿皮摩托車夾克",
     "description": "100% 人造皮革，舒適合身，2口袋設計，時尚復古。",
     "category": "女裝",
     "price": 300,
-    "stock": 340,
-    "image": "https://fakestoreapi.com/img/81XH0e8fefL._AC_UY879_.jpg"
+    "stock": 340
   },
   {
     "name": "雨衣女款防風登山夾克",
     "description": "輕便適合旅行或日常穿搭，連帽可調節腰身設計，帶條紋內裡，兩側大口袋。",
     "category": "女裝",
     "price": 400,
-    "stock": 679,
-    "image": "https://fakestoreapi.com/img/71HblAHs5xL._AC_UY879_-2.jpg"
+    "stock": 679
   },
   {
     "name": "MBJ 女士短袖船領上衣",
     "description": "95% 人造絲 5% 氨綸，美國製造或進口，輕便透氣，船領設計。",
     "category": "女裝",
     "price": 100,
-    "stock": 130,
-    "image": "https://fakestoreapi.com/img/71z3kpMAYsL._AC_UY879_.jpg"
+    "stock": 130
   },
   {
     "name": "Opna 女士短袖吸濕排汗T恤",
     "description": "100% 聚酯纖維，機洗，輕便合身，適合運動，吸濕排汗面料保持乾爽。",
     "category": "女裝",
     "price": 80,
-    "stock": 146,
-    "image": "https://fakestoreapi.com/img/51eg55uWmdL._AC_UX679_.jpg"
+    "stock": 146
   },
   {
     "name": "DANVOUY 女士短袖T恤",
     "description": "95% 棉 5% 氨綸，休閒短袖印字T恤，柔軟彈性面料，適合各種場合穿著。",
     "category": "女裝",
     "price": 130,
-    "stock": 145,
-    "image": "https://fakestoreapi.com/img/61pHAEJ4NML._AC_UX679_.jpg"
+    "stock": 145
   },
   {
     "name": "【Acer 宏碁】Nitro V ANV16-41-R8RN 16吋 R5 RTX4050 電競筆電",
     "description": "全新AMD 8000系列 NVIDIA RTX40系列獨立顯卡，支援 MUX Switch 獨顯直連",
     "category": "電子產品",
     "price": 31900,
-    "stock": 10,
-    "image": "https://www.sanjing3c.com.tw/data/images/202405/QCRAN018.jpg"
+    "stock": 10
   },
   {
     "name": "【ASUS 華碩】H-S500TE 13代i5/500W 特仕版桌機",
     "description": "特仕機 下單既已同意拆箱加裝商品",
     "category": "電子產品",
     "price": 19490,
-    "stock": 25,
-    "image": "https://www.sanjing3c.com.tw/data/images/202404/QASP0002X1.jpg"
+    "stock": 25
   },
   {
     "name": "【MSI 微星】GeForce RTX 4060 VENTUS 2X BLACK 8G OC 顯示卡",
     "description": "雙風扇散熱設計",
     "category": "電子產品",
     "price": 9890,
-    "stock": 5,
-    "image": "https://www.sanjing3c.com.tw/data/images/202307/CMS167.jpg"
+    "stock": 5
   },
   {
     "name": "【Thermaltake 曜越】PURE 12 C靜音風扇【紅色扇葉】",
     "description": "長效壽命 含油軸承",
     "category": "電子產品",
     "price": 260,
-    "stock": 50,
-    "image": "https://www.sanjing3c.com.tw/data/images/201606/CAFAN07.jpg"
+    "stock": 50
   },
   {
     "name": "【伽利略】USB2.0 鋁殼音效卡 黑",
     "description": "免驅動程式，隨插即用",
     "category": "電子產品",
     "price": 239,
-    "stock": 150,
-    "image": "https://www.sanjing3c.com.tw/data/images/201705/CSO008.jpg"
+    "stock": 150
   },
   {
     "name": "【Panasonic】國際牌 610公升門無邊框鋼板系列 [NR-C611XV-B 皇家藍] 含基本安裝",
     "description": "有效容積500L",
     "category": "電子產品",
     "price": 40800,
-    "stock": 10,
-    "image": "https://www.sanjing3c.com.tw/data/images/202403/VCFU_838.png"
+    "stock": 10
   },
   {
     "name": "【Panasonic 國際牌】9公斤單槽洗衣機 白色 [NA-90EB-W] 含基本安裝",
     "description": "全方位立體水流",
     "category": "電子產品",
     "price": 8911,
-    "stock": 10,
-    "image": "https://www.sanjing3c.com.tw/data/images/202204/TNA90EBW.jpg"
+    "stock": 10
   },
   {
     "name": "登錄送現金★【Panasonic 國際牌】11-13坪 R32 一級能效變頻冷暖分離式冷氣 CU-K80FHA2/CS-K80FA2",
     "description": "此商品送基本安裝服務、舊機回收服務",
     "category": "電子產品",
     "price": 70680,
-    "stock": 20,
-    "image": "https://www.sanjing3c.com.tw/data/images/201811/K-1000-1.jpg"
+    "stock": 20
   },
   {
     "name": "【LG 樂金】MD171QSE0 PuriCare UV抑菌 WiFi變頻除濕機-17公升/晶鑽銀",
     "description": "符合除濕機能效一級",
     "category": "電子產品",
     "price": 18900,
-    "stock": 150,
-    "image": "https://www.sanjing3c.com.tw/data/images/202212/TMD171QSE0.jpg"
+    "stock": 150
   },
   {
     "name": "【MATRIC 松木】直臥兩用布團乾燥機(烘被/烘鞋/除蟎) MG-BM4501",
     "description": "直立橫臥二用，依您擺放位置隨心所欲",
     "category": "電子產品",
     "price": 4980,
-    "stock": 150,
-    "image": "https://www.sanjing3c.com.tw/data/images/202011/MG-BM4501.jpg"
+    "stock": 150
   },
   {
     "name": "預購【NS 遊戲】瑪利歐 & 路易吉 RPG 兄弟齊航！《中文版》",
     "description": "瑪利歐和路易吉將探訪漂浮在汪洋大海上的各個島嶼，展開全新的冒險。",
     "category": "電子產品",
     "price": 1390,
-    "stock": 15,
-    "image": "https://www.sanjing3c.com.tw/data/images/202406/GNSA0311.jpg"
+    "stock": 15
   },
   {
     "name": "預購【NS 遊戲】遊戲王 昔日精選集《日英文合版》",
     "description": "紀念《遊戲王》卡牌遊戲問世 25 周年，超過 10 款 1998 年至 2004 年間推出",
     "category": "電子產品",
     "price": 1290,
-    "stock": 10,
-    "image": "https://www.sanjing3c.com.tw/data/images/202410/GNSA0375.jpg"
+    "stock": 10
   },
   {
     "name": "【Redmi 紅米】13C 4G/128G 大電量智慧手機 午夜黑",
     "description": "視覺與性能的極致融合，擁抱智慧手機新體驗",
     "category": "電子產品",
     "price": 3280,
-    "stock": 12,
-    "image": "https://www.sanjing3c.com.tw/data/images/202312/CRMN13C4128BK.jpg"
+    "stock": 12
   },
   {
     "name": "【SAMSUNG 三星】Galaxy A55 8G/256G 6.6吋 5G 智慧型手機｜冰藍莓",
     "description": "臉部辨識 光學螢幕指紋辨識",
     "category": "電子產品",
     "price": 10690,
-    "stock": 20,
-    "image": "https://www.sanjing3c.com.tw/data/images/202403/CSA558256BK.jpg"
+    "stock": 20
   },
   {
     "name": "【Xiaomi】小米手環 8 石墨黑",
     "description": "全新跑豆模式，帶來最專業的跑步體驗",
     "category": "電子產品",
     "price": 1195,
-    "stock": 22,
-    "image": "https://www.sanjing3c.com.tw/data/images/202310/WMI007.jpg"
+    "stock": 22
   },
   {
     "name": "【MCK】全協議行動電源 10000mah｜鋼鐵黑",
     "description": "全協議廣泛兼容性",
     "category": "電子產品",
     "price": 790,
-    "stock": 35,
-    "image": "https://www.sanjing3c.com.tw/data/images/202408/ZBTMCK009.jpg"
+    "stock": 35
   },
   {
     "name": "【NS組合】OLED主機 白色手把+健身環+運動 Sports+保護貼",
     "description": "NS Switch OLED款式 黑色主機 白色手把 *1",
     "category": "電子產品",
     "price": 13588,
-    "stock": 12,
-    "image": "https://www.sanjing3c.com.tw/data/images/202301/NSM221.jpg"
+    "stock": 12
   },
   {
     "name": "【Caldo 卡朵生活】曖曖內含光 彈蓋不鏽鋼保溫瓶 500ml 靜謐黑",
     "description": "內膽304不鏽鋼，食用安全無虞",
     "category": "電子產品",
     "price": 499,
-    "stock": 15,
-    "image": "https://www.sanjing3c.com.tw/data/images/202408/TLLAM203BK.JPG"
+    "stock": 15
   },
   {
     "name": "【Tripology】俐落快取前開式行李箱 - 26吋/米白",
     "description": "充電+杯架+掛物",
     "category": "電子產品",
     "price": 5490,
-    "stock": 150,
-    "image": "https://www.sanjing3c.com.tw/data/images/202407/TTRIP26W.jpg"
+    "stock": 150
   },
   {
     "name": "【HP 惠普】LaserJet M111w 無線黑白雷射印表機",
     "description": "Wi-Fi手機直印/行動裝置全支援(APPLEiOS/Android/windows)/隨時隨地可遠端列印",
     "category": "電子產品",
     "price": 2990,
-    "stock": 200,
-    "image": "https://www.sanjing3c.com.tw/data/images/202410/PRHP719.JPG"
+    "stock": 200
   },
   {
     "name": "六層隙縫收納櫃(附輪)",
     "description": "餐廳廚房之間，總免不了各種小東西要收納整理，充分利用您的小空間～～打造餐廚的魔術創意空間，就是EASY！",
     "category": "居家",
     "price": 940,
-    "stock": 20,
-    "image": "https://images.pcone.com.tw/uploads/product_image/7402150/bc904282c4c0d204d528c80a14cc5c3b/b83852382b83400896f827189bb7bea6.jpg"
+    "stock": 20
   },
   {
     "name": "【空間特工】消光黑雙層滾筒洗衣機免螺絲角鋼架 快速出貨 烘衣機 置物架 收納架 耐重層架 滾筒洗衣機",
     "description": "空間特工雙層洗衣機架獨家配贈專利防彈扣，解決因長期搖晃造成的孔洞鬆脫，再也不必擔心角鋼架解體，用多久都不怕！",
     "category": "居家",
     "price": 2894,
-    "stock": 10,
-    "image": "https://images.pcone.com.tw/uploads/product_image/3410861/2659d5a53d6cdaa4b115fba631ff4d3f/69c4c06b4e997f3ba2a2bab6a092d300.jpg"
+    "stock": 10
   },
   {
     "name": "【TZUMii】創意樂芙掀門堆疊收納櫃/門櫃/收納箱",
     "description": "出貨不含情境圖中的櫃內商品(已收到實品為主)",
     "category": "居家",
     "price": 508,
-    "stock": 25,
-    "image": "https://images.pcone.com.tw/uploads/product_image/1916476/b3ee4b4aa336c5e85597c0338d2c4d9b/58c3538604bb95f608de4b1cd0c17c69.jpg"
+    "stock": 25
   },
   {
     "name": "免安裝五層摺疊置物架-秒開折疊收納架",
     "description": "免安裝五層摺疊置物架，無須安裝，一開即用，便捷收納，不用時可折疊存放。優選高強碳鋼，穩固不變形，強悍耐重，讓您用的更放心！360度旋轉帶煞車方向滑輪，居家隨處都可使用喔！",
     "category": "居家",
     "price": 922,
-    "stock": 2,
-    "image": "https://images.pcone.com.tw/uploads/product_image/8737453/87916633915370ccb67dd76b7d342dff/4ee3b67c2d7f1bad87002886892b625d.png"
+    "stock": 2
   },
   {
     "name": "太空鋁置物架 免鑽孔置物架 DIY 浴室置物架 免釘置物架 收納架 收納置物架",
     "description": "免釘鑽，簡約風格，輕鬆收納",
     "category": "居家",
     "price": 226,
-    "stock": 30,
-    "image": "https://images.pcone.com.tw/uploads/product_image/6815987/c54e0c2537fe699e4ebdc12cd91aeb17/0e3271dea2db96bcb95b14b4a0c2d78a.jpg"
+    "stock": 30
   }
 ]

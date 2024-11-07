@@ -1,5 +1,5 @@
 // 引用 Models
-const { Product } = require('../models')
+const { Product, Image, User } = require('../models')
 // 引用異步錯誤處理中間件
 const { asyncError } = require('../middlewares')
 // 自訂錯誤訊息模組
@@ -21,9 +21,25 @@ class ProductController extends Validator {
     const page = parseInt(req.query.page) || 1
     const offset = (page - 1) * limit
 
-    const { count, rows: products } = await Product.findAndCountAll({
+    // findAndCountAll + scope => wrong count
+
+    const count = await Product.count()
+
+    const products = await Product.findAll({
       limit,
-      offset
+      offset,
+      include: [
+        {
+          model: Image,
+          as: 'image',
+          attributes: ['link']
+        },
+        {
+          model: User,
+          as: 'user',
+          attributes: ['username']
+        }
+      ]
     })
 
     res.status(200).json({
@@ -32,7 +48,7 @@ class ProductController extends Validator {
         totalItems: count,
         totalPages: Math.ceil(count / limit),
         currentPage: page,
-        products,
+        products
       }
     })
   })

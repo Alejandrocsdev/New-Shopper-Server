@@ -14,5 +14,6 @@ router.put('/', jwtAuth, upload(storageType), userController.putUserImage)
 router.get('/find/:userInfo', userController.findUserByInfo)
 router.put('/:userId', jwtAuth, userController.putUser)
 router.put('/pwd/:userInfo', userController.putPwdByInfo)
+router.post('/role', jwtAuth, userController.postUserRole)
 
 module.exports = router
