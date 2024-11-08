@@ -108,7 +108,7 @@ class Encrypt {
 
   // Access JWT
   signAccessToken(id, rolesData) {
-    const roles = rolesData.map(role => role.name)
+    const roles = rolesData.map((role) => role.name)
     try {
       const token = jwt.sign({ id: Number(id), roles }, process.env.AT_SECRET, { expiresIn: '15m' })
       return token
@@ -163,6 +163,28 @@ class Encrypt {
     } else {
       throw new CustomError(500, 'error.defaultError', 'md5 雜湊失敗')
     }
+  }
+
+  aes(data, hashKey, hashIV) {
+    const encodedData = encodeURIComponent(data)
+
+    const cipher = crypto.createCipheriv('aes-128-cbc', hashKey, hashIV)
+    cipher.setAutoPadding(true)
+
+    let encrypted = cipher.update(encodedData, 'utf8', 'base64')
+    encrypted += cipher.final('base64')
+
+    return encrypted
+  }
+
+  decodeAes(encryptedData, hashKey, hashIV) {
+    const decipher = crypto.createDecipheriv('aes-128-cbc', hashKey, hashIV)
+    decipher.setAutoPadding(true)
+
+    let decrypted = decipher.update(encryptedData, 'base64', 'utf8')
+    decrypted += decipher.final('utf8')
+
+    return decodeURIComponent(decrypted)
   }
 
   tradeNo(orderId) {

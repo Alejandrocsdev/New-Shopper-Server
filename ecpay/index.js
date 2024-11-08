@@ -1,24 +1,22 @@
 const time = require('../utils/time')
-const encrypt = require('../utils/encrypt')
+const { encrypt } = require('../utils')
 const { backPublicUrl, frontUrl } = require('../utils')
 
 class Ecpay {
   merchantId(type) {
-    return type === 'payment'
-      ? process.env.ECPAY_PAYMENT_MERCHANT_ID
-      : process.env.ECPAY_LOGISTICS_MERCHANT_ID
+    return process.env[`ECPAY_${type.toUpperCase()}_MERCHANT_ID`]
   }
 
   hashKey(type) {
-    return type === 'payment'
-      ? process.env.ECPAY_PAYMENT_HASH_KEY
-      : process.env.ECPAY_LOGISTICS_HASH_KEY
+    return process.env[`ECPAY_${type.toUpperCase()}_HASH_KEY`]
   }
 
   hashIV(type) {
-    return type === 'payment'
-      ? process.env.ECPAY_PAYMENT_HASH_IV
-      : process.env.ECPAY_LOGISTICS_HASH_IV
+    return process.env[`ECPAY_${type.toUpperCase()}_HASH_IV`]
+  }
+
+  api(type) {
+    return process.env[`ECPAY_${type.toUpperCase()}_API`]
   }
 
   // Payment method
@@ -70,6 +68,172 @@ class Ecpay {
     console.log('ServerReplyURL', params.ServerReplyURL)
 
     return this.macValue(params, 'logistics')
+  }
+
+  getGovInvoiceWordSetting(InvoiceYear) {
+    const MerchantID = this.merchantId('envoice')
+
+    const requestData = JSON.stringify({
+      MerchantID,
+      InvoiceYear
+    })
+
+    const encryptedData = encrypt.aes(requestData, this.hashKey('envoice'), this.hashIV('envoice'))
+
+    const payload = {
+      MerchantID,
+      RqHeader: {
+        Timestamp: Math.floor(Date.now() / 1000)
+      },
+      Data: encryptedData
+    }
+
+    return payload
+  }
+
+  AddInvoiceWordSetting() {
+    const MerchantID = this.merchantId('envoice')
+
+    const requestData = JSON.stringify({
+      MerchantID,
+      InvoiceTerm: '6',
+      InvoiceYear: '113',
+      InvType: '07',
+      InvoiceCategory: '1',
+      InvoiceHeader: 'TZ',
+      InvoiceStart: '90005050',
+      InvoiceEnd: '90005099'
+    })
+
+    const encryptedData = encrypt.aes(requestData, this.hashKey('envoice'), this.hashIV('envoice'))
+
+    const payload = {
+      MerchantID,
+      RqHeader: {
+        Timestamp: Math.floor(Date.now() / 1000)
+      },
+      Data: encryptedData
+    }
+
+    return payload
+  }
+
+  SetInvoiceWordSetting(TrackID) {
+    const MerchantID = this.merchantId('envoice')
+
+    const requestData = JSON.stringify({
+      MerchantID,
+      TrackID,
+      InvoiceStatus: '2'
+    })
+
+    // 0:停用
+    // 1:暫停
+    // 2:啟用
+
+    const encryptedData = encrypt.aes(requestData, this.hashKey('envoice'), this.hashIV('envoice'))
+
+    const payload = {
+      MerchantID,
+      RqHeader: {
+        Timestamp: Math.floor(Date.now() / 1000)
+      },
+      Data: encryptedData
+    }
+
+    return payload
+  }
+
+  getInvoiceWordSetting(InvoiceYear) {
+    const MerchantID = this.merchantId('envoice')
+
+    const requestData = JSON.stringify({
+      MerchantID,
+      InvoiceYear,
+      InvoiceTerm: '0',
+      UseStatus: '2',
+      InvoiceCategory: '1',
+      InvType: '07'
+    })
+
+    const encryptedData = encrypt.aes(requestData, this.hashKey('envoice'), this.hashIV('envoice'))
+
+    const payload = {
+      MerchantID,
+      RqHeader: {
+        Timestamp: Math.floor(Date.now() / 1000)
+      },
+      Data: encryptedData
+    }
+
+    return payload
+  }
+
+  IssueInvoice(orderId) {
+    const MerchantID = this.merchantId('envoice')
+
+    const requestData = JSON.stringify({
+      MerchantID,
+      RelateNumber: encrypt.tradeNo(orderId),
+      CustomerName: 'John Doe',
+      CustomerAddr: '123 Sample Street',
+      CustomerPhone: '0912345678',
+      CustomerEmail: 'johndoe@example.com',
+      Print: '1',
+      Donation: '0',
+      TaxType: '1',
+      SalesAmount: 10000,
+      Items: [
+        {
+          ItemName: 'Sample Item',
+          ItemCount: '2',
+          ItemWord: 'pcs',
+          ItemPrice: '5000',
+          ItemAmount: '10000'
+        }
+      ],
+      InvType: '07'
+    })
+
+    const encryptedData = encrypt.aes(requestData, this.hashKey('envoice'), this.hashIV('envoice'))
+
+    const payload = {
+      MerchantID,
+      RqHeader: {
+        Timestamp: Math.floor(Date.now() / 1000)
+      },
+      Data: encryptedData
+    }
+
+    return payload
+  }
+
+  InvoicePrint(orderId) {
+    const MerchantID = this.merchantId('envoice')
+    // "RtnCode": 1,
+    // "RtnMsg": "開立發票成功",
+    // "InvoiceNo": "TZ90005056",
+    // "InvoiceDate": "2024-11-08+19:41:14",
+    // "RandomNumber": "9931"
+    const requestData = JSON.stringify({
+      MerchantID,
+      InvoiceNo: 'TZ90002529',
+      InvoiceDate: '2024-11-08',
+      PrintStyle: '1',
+      IsShowingDetail: '0'
+    })
+
+    const encryptedData = encrypt.aes(requestData, this.hashKey('envoice'), this.hashIV('envoice'))
+
+    const payload = {
+      MerchantID,
+      RqHeader: {
+        Timestamp: Math.floor(Date.now() / 1000)
+      },
+      Data: encryptedData
+    }
+
+    return payload
   }
 
   macValue(params, type) {

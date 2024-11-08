@@ -29,6 +29,7 @@
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
+    "puppeteer": "^23.7.1",
     "sequelize": "^6.37.4",
     "twilio": "^5.3.4"
   },
