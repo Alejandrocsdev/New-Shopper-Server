@@ -182,6 +182,50 @@ class UserController extends Validator {
     res.status(200).json({ message: '商品加入購物車成功', cartItems })
   })
 
+  putUserCart = asyncError(async (req, res, next) => {
+    const { user } = req
+    if (!user) throw new CustomError(401, 'error.signInAgain', '用戶授權失敗')
+
+    const { productId } = req.params
+    const { quantity } = req.body
+
+    if (quantity <= 0) {
+      throw new CustomError(400, '數量必須大於零', '數量必須大於零')
+    }
+
+    const cart = await Cart.findOne({ where: { userId: user.id } })
+    if (!cart) {
+      throw new CustomError(404, '查無購物車', '查無購物車')
+    }
+
+    const cartItem = await CartItem.findOne({
+      where: { cartId: cart.id, productId }
+    })
+
+    if (!cartItem) {
+      throw new CustomError(404, '找不到該商品於購物車中', '找不到該商品於購物車中')
+    }
+
+    cartItem.quantity = quantity
+    cartItem.totalPrice = quantity * cartItem.unitPrice
+    await cartItem.save()
+
+    const updatedCartItems = await CartItem.findAll({
+      where: { cartId: cart.id },
+      include: [
+        {
+          model: Product,
+          as: 'product',
+          attributes: ['name', 'price', 'stock'],
+          include: [{ model: Image, as: 'image', attributes: ['link'] }]
+        }
+      ],
+      order: [['createdAt', 'DESC']]
+    })
+
+    res.status(200).json({ message: '購物車商品數量更新成功', cartItems: updatedCartItems })
+  })
+
   deleteUserCart = asyncError(async (req, res, next) => {
     const { user } = req
     if (!user) throw new CustomError(401, 'error.signInAgain', '用戶授權失敗')
