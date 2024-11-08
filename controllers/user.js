@@ -166,7 +166,7 @@ class UserController extends Validator {
         {
           model: Product,
           as: 'product',
-          attributes: ['name', 'price'],
+          attributes: ['name', 'price', 'stock'],
           include: [
             {
               model: Image,
@@ -202,7 +202,7 @@ class UserController extends Validator {
         {
           model: Product,
           as: 'product',
-          attributes: ['name', 'price'],
+          attributes: ['name', 'price', 'stock'],
           include: [
             {
               model: Image,
