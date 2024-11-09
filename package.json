@@ -5,7 +5,16 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "reset": "npx sequelize db:drop && npx sequelize db:create && npx sequelize db:migrate && npx sequelize db:seed:all"
+    "reset": "cross-env MYSQL_DB=shopper npx sequelize db:drop --env development && cross-env MYSQL_DB=shopper npx sequelize db:create --env development && cross-env MYSQL_DB=shopper npx sequelize db:migrate --env development && cross-env MYSQL_DB=shopper npx sequelize db:seed:all --env development",
+    "admin-drop": "cross-env MYSQL_DB=admin npx sequelize db:drop --env development",
+    "admin-create": "cross-env MYSQL_DB=admin npx sequelize db:create --env development",
+    "admin-migrate": "cross-env MYSQL_DB=admin npx sequelize db:migrate --env development",
+    "admin-seed": "cross-env MYSQL_DB=admin npx sequelize db:seed:all --env development",
+    "prod-reset": "cross-env MYSQL_DB=shopper npx sequelize db:drop --env production && cross-env MYSQL_DB=shopper npx sequelize db:create --env production && cross-env MYSQL_DB=shopper npx sequelize db:migrate --env production && cross-env MYSQL_DB=shopper npx sequelize db:seed:all --env production",
+    "prod-admin-drop": "cross-env MYSQL_DB=admin npx sequelize db:drop --env production",
+    "prod-admin-create": "cross-env MYSQL_DB=admin npx sequelize db:create --env production",
+    "prod-admin-migrate": "cross-env MYSQL_DB=admin npx sequelize db:migrate --env production",
+    "prod-admin-seed": "cross-env MYSQL_DB=admin npx sequelize db:seed:all --env production"
   },
   "author": "alejandrocsdev",
   "license": "MIT",
@@ -34,6 +43,7 @@
     "twilio": "^5.3.4"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "nodemon": "^3.1.7",
     "sequelize-cli": "^6.6.2"
   }

@@ -1,0 +1,38 @@
+# Normalize all text files to use LF line endings in the repository.
+# This ensures consistency across different operating systems (e.g., Windows, macOS, Linux).
+# Files will be converted to the system's native line endings when checked out.
+* text=auto
+
+# Explicitly set specific line endings for certain file types
+# LF (Line Feed) for shell scripts and configuration files, which are often used on Unix-based systems.
+*.sh text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+
+# CRLF (Carriage Return + Line Feed) for Windows batch files
+# This ensures that batch scripts will run correctly on Windows systems.
+*.bat text eol=crlf
+
+# Mark binary files to prevent Git from attempting to normalize or diff them
+# This helps avoid data corruption in binary files caused by unintended line ending conversions.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.zip binary
+*.exe binary
+*.dll binary
+
+# Custom diff setting for Markdown files (if needed)
+# By specifying this, we could set up a custom diff driver to handle Markdown files differently.
+# *.md diff=markdown
+
+# Linguist overrides for GitHub (if this project will be hosted on GitHub)
+# Exclude certain directories (e.g., dependencies or vendor code) from language stats.
+node_modules/* linguist-vendored
+vendor/* linguist-vendored
