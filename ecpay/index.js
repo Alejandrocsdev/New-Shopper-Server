@@ -1,6 +1,7 @@
-const time = require('../utils/time')
-const { encrypt } = require('../utils')
-const { backPublicUrl, frontUrl } = require('../utils')
+// 引用 工具 模組
+const { time, encrypt, backPublicUrl, frontUrl } = require('../utils')
+// 引用 axios
+const axios = require('axios')
 
 class Ecpay {
   merchantId(type) {
@@ -17,223 +18,6 @@ class Ecpay {
 
   api(type) {
     return process.env[`ECPAY_${type.toUpperCase()}_API`]
-  }
-
-  // Payment method
-  payment(orderId, payload) {
-    const { TotalAmount, ItemName } = payload
-
-    const params = {
-      MerchantTradeNo: encrypt.tradeNo(orderId),
-      MerchantTradeDate: time.tradeDate(),
-      TotalAmount,
-      ItemName,
-      TradeDesc: '商品訂單',
-      ReturnURL: `${global.ngrokUrl || backPublicUrl}/api/ecpay/payment/result`,
-      ClientBackURL: `${frontUrl}`,
-      PlatformID: '',
-      MerchantID: this.merchantId('payment'),
-      InvoiceMark: 'N',
-      EncryptType: '1',
-      PaymentType: 'aio',
-      ChoosePayment: 'ALL',
-      IgnorePayment: '',
-      DeviceSource: ''
-    }
-
-    return this.macValue(params, 'payment')
-  }
-
-  storeList(CvsType) {
-    const params = {
-      MerchantID: this.merchantId('logistics'),
-      CvsType,
-      PlatformID: ''
-    }
-
-    return this.macValue(params, 'logistics')
-  }
-
-  expressMap(userId, LogisticsSubType, lang) {
-    const params = {
-      MerchantID: this.merchantId('logistics'),
-      MerchantTradeNo: encrypt.tradeNo(`${userId}-`),
-      LogisticsType: 'CVS',
-      LogisticsSubType,
-      IsCollection: 'N',
-      ServerReplyURL: `${global.ngrokUrl || backPublicUrl}/api/ecpay/store/express-map/result`,
-      ExtraData: lang
-    }
-
-    console.log('ServerReplyURL', params.ServerReplyURL)
-
-    return this.macValue(params, 'logistics')
-  }
-
-  getGovInvoiceWordSetting(InvoiceYear) {
-    const MerchantID = this.merchantId('envoice')
-
-    const requestData = JSON.stringify({
-      MerchantID,
-      InvoiceYear
-    })
-
-    const encryptedData = encrypt.aes(requestData, this.hashKey('envoice'), this.hashIV('envoice'))
-
-    const payload = {
-      MerchantID,
-      RqHeader: {
-        Timestamp: Math.floor(Date.now() / 1000)
-      },
-      Data: encryptedData
-    }
-
-    return payload
-  }
-
-  AddInvoiceWordSetting() {
-    const MerchantID = this.merchantId('envoice')
-
-    const requestData = JSON.stringify({
-      MerchantID,
-      InvoiceTerm: '6',
-      InvoiceYear: '113',
-      InvType: '07',
-      InvoiceCategory: '1',
-      InvoiceHeader: 'TZ',
-      InvoiceStart: '90005050',
-      InvoiceEnd: '90005099'
-    })
-
-    const encryptedData = encrypt.aes(requestData, this.hashKey('envoice'), this.hashIV('envoice'))
-
-    const payload = {
-      MerchantID,
-      RqHeader: {
-        Timestamp: Math.floor(Date.now() / 1000)
-      },
-      Data: encryptedData
-    }
-
-    return payload
-  }
-
-  SetInvoiceWordSetting(TrackID) {
-    const MerchantID = this.merchantId('envoice')
-
-    const requestData = JSON.stringify({
-      MerchantID,
-      TrackID,
-      InvoiceStatus: '2'
-    })
-
-    // 0:停用
-    // 1:暫停
-    // 2:啟用
-
-    const encryptedData = encrypt.aes(requestData, this.hashKey('envoice'), this.hashIV('envoice'))
-
-    const payload = {
-      MerchantID,
-      RqHeader: {
-        Timestamp: Math.floor(Date.now() / 1000)
-      },
-      Data: encryptedData
-    }
-
-    return payload
-  }
-
-  getInvoiceWordSetting(InvoiceYear) {
-    const MerchantID = this.merchantId('envoice')
-
-    const requestData = JSON.stringify({
-      MerchantID,
-      InvoiceYear,
-      InvoiceTerm: '0',
-      UseStatus: '2',
-      InvoiceCategory: '1',
-      InvType: '07'
-    })
-
-    const encryptedData = encrypt.aes(requestData, this.hashKey('envoice'), this.hashIV('envoice'))
-
-    const payload = {
-      MerchantID,
-      RqHeader: {
-        Timestamp: Math.floor(Date.now() / 1000)
-      },
-      Data: encryptedData
-    }
-
-    return payload
-  }
-
-  IssueInvoice(orderId) {
-    const MerchantID = this.merchantId('envoice')
-
-    const requestData = JSON.stringify({
-      MerchantID,
-      RelateNumber: encrypt.tradeNo(orderId),
-      CustomerName: 'John Doe',
-      CustomerAddr: '123 Sample Street',
-      CustomerPhone: '0912345678',
-      CustomerEmail: 'johndoe@example.com',
-      Print: '1',
-      Donation: '0',
-      TaxType: '1',
-      SalesAmount: 10000,
-      Items: [
-        {
-          ItemName: 'Sample Item',
-          ItemCount: '2',
-          ItemWord: 'pcs',
-          ItemPrice: '5000',
-          ItemAmount: '10000'
-        }
-      ],
-      InvType: '07'
-    })
-
-    const encryptedData = encrypt.aes(requestData, this.hashKey('envoice'), this.hashIV('envoice'))
-
-    const payload = {
-      MerchantID,
-      RqHeader: {
-        Timestamp: Math.floor(Date.now() / 1000)
-      },
-      Data: encryptedData
-    }
-
-    return payload
-  }
-
-  InvoicePrint(orderId) {
-    const MerchantID = this.merchantId('envoice')
-    // "RtnCode": 1,
-    // "RtnMsg": "開立發票成功",
-    // "InvoiceNo": "TZ90005056",
-    // "InvoiceDate": "2024-11-08+19:41:14",
-    // "RandomNumber": "9931"
-    const requestData = JSON.stringify({
-      MerchantID,
-      InvoiceNo: 'TZ90002529',
-      InvoiceDate: '2024-11-08',
-      PrintStyle: '1',
-      IsShowingDetail: '0'
-    })
-
-    const encryptedData = encrypt.aes(requestData, this.hashKey('envoice'), this.hashIV('envoice'))
-
-    const payload = {
-      MerchantID,
-      RqHeader: {
-        Timestamp: Math.floor(Date.now() / 1000)
-      },
-      Data: encryptedData
-    }
-
-    return payload
   }
 
   macValue(params, type) {
@@ -256,6 +40,124 @@ class Ecpay {
     const toUpperCase = hash.toUpperCase()
     params.CheckMacValue = toUpperCase
     return params
+  }
+
+  securePayload(data) {
+    const MerchantID = this.merchantId('einvoice')
+
+    data.MerchantID = MerchantID
+
+    const requestData = JSON.stringify(data)
+
+    const encryptedData = encrypt.aes(
+      requestData,
+      this.hashKey('einvoice'),
+      this.hashIV('einvoice')
+    )
+
+    const payload = {
+      MerchantID,
+      RqHeader: {
+        Timestamp: Math.floor(Date.now() / 1000)
+      },
+      Data: encryptedData
+    }
+
+    return payload
+  }
+
+  async einvoiceResult(data, api) {
+    const payload = this.securePayload(data)
+    try {
+      const response = await axios.post(api, payload)
+
+      const Data = response.data.Data
+
+      const decodedData = encrypt.decodeAes(Data, this.hashKey('einvoice'), this.hashIV('einvoice'))
+
+      return JSON.parse(decodedData)
+    } catch (error) {
+      console.log(error.message)
+    }
+  }
+
+  AioCheckOutCredit(orderId, payload) {
+    const { TotalAmount, ItemName } = payload
+
+    const params = {
+      MerchantID: this.merchantId('payment'),
+      MerchantTradeNo: encrypt.tradeNo(orderId),
+      MerchantTradeDate: time.tradeDate(),
+      PaymentType: 'aio',
+      TotalAmount,
+      TradeDesc: '商品訂單',
+      ItemName,
+      ReturnURL: `${global.ngrokUrl || backPublicUrl}/api/ecpay/payment/result`,
+      ChoosePayment: 'Credit',
+      EncryptType: '1',
+      ClientBackURL: `${frontUrl}`
+    }
+
+    return this.macValue(params, 'payment')
+  }
+
+  // GetStoreList(CvsType) {
+  //   const params = {
+  //     MerchantID: this.merchantId('logistics'),
+  //     CvsType
+  //   }
+
+  //   return this.macValue(params, 'logistics')
+  // }
+
+  ExpressMap(userId, LogisticsSubType, path) {
+    const params = {
+      MerchantID: this.merchantId('logistics'),
+      MerchantTradeNo: encrypt.tradeNo(`${userId}-`),
+      LogisticsType: 'CVS',
+      LogisticsSubType,
+      IsCollection: 'N',
+      ServerReplyURL: `${global.ngrokUrl || backPublicUrl}/api/ecpay/logisticts/store/result`,
+      ExtraData: path
+    }
+
+    return this.macValue(params, 'logistics')
+  }
+
+  GetGovInvoiceWordSetting(data) {
+    const api = `${this.api('einvoice')}/B2CInvoice/GetGovInvoiceWordSetting`
+
+    return this.einvoiceResult(data, api)
+  }
+
+  AddInvoiceWordSetting(data) {
+    const api = `${this.api('einvoice')}/B2CInvoice/AddInvoiceWordSetting`
+
+    return this.einvoiceResult(data, api)
+  }
+
+  UpdateInvoiceWordStatus(data) {
+    const api = `${this.api('einvoice')}/B2CInvoice/UpdateInvoiceWordStatus`
+
+    return this.einvoiceResult(data, api)
+  }
+
+  GetInvoiceWordSetting(data) {
+    const api = `${this.api('einvoice')}/B2CInvoice/GetInvoiceWordSetting`
+
+    return this.einvoiceResult(data, api)
+  }
+
+  IssueInvoice(data) {
+    const api = `${this.api('einvoice')}/B2CInvoice/Issue`
+
+    return this.einvoiceResult(data, api)
+  }
+
+  InvoicePrint(data) {
+    const api = `${this.api('einvoice')}/B2CInvoice/InvoicePrint`
+
+    return this.einvoiceResult(data, api)
   }
 }
 

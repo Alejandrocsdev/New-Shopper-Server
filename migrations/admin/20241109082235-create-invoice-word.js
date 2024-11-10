@@ -2,44 +2,24 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('cart_items', {
+    await queryInterface.createTable('invoice_words', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      cart_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'carts',
-          key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
-      },
-      product_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'products',
-          key: 'id'
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE'
-      },
-      quantity: {
+      invoice_term: {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      unit_price: {
+      invoice_header: {
         allowNull: false,
-        type: Sequelize.DECIMAL
+        type: Sequelize.STRING
       },
-      total_price: {
+      invoice_year: {
         allowNull: false,
-        type: Sequelize.DECIMAL
+        type: Sequelize.STRING
       },
       created_at: {
         allowNull: false,
@@ -54,6 +34,6 @@ module.exports = {
     })
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('cart_items')
+    await queryInterface.dropTable('invoice_words')
   }
 }

@@ -3,17 +3,20 @@ const router = Router()
 
 const { ecpayController } = require('../controllers')
 
-// 簡訊
-router.get('/payment', ecpayController.payment)
-router.post('/payment/result', ecpayController.paymentResult)
-router.get('/store/list', ecpayController.getStoreList)
-router.get('/store/express-map', ecpayController.getStore)
-router.post('/store/express-map/result', ecpayController.getStoreResult)
-router.post('/envoice/gov-invoice-type', ecpayController.getInvoiceType)
-router.post('/envoice/add-invoice-type', ecpayController.addInvoiceType)
-router.post('/envoice/set-invoice-type', ecpayController.setInvoiceType)
-router.post('/envoice/get-invoice', ecpayController.getInvoice)
-router.post('/envoice/issue', ecpayController.issueInvoice)
-router.post('/envoice/issue-print', ecpayController.invoicePrint)
+router.get('/payment/params', ecpayController.paymentParams)
+router.post('/payment/result', ecpayController.paymentResult) // ReturnURL
+
+router.get('/logisticts/store/params', ecpayController.getStoreParams)
+router.post('/logisticts/store/result', ecpayController.getStoreResult) // ServerReplyURL
+
+router.post('/einvoice/get-gov-word-setting', ecpayController.getGovWordSetting)
+router.post('/einvoice/add-word-setting', ecpayController.addWordSetting)
+router.post('/einvoice/set-word-status', ecpayController.setWordStatus)
+router.post('/einvoice/get-word-setting', ecpayController.getWordSetting)
+
+router.post('/einvoice/issue', ecpayController.issueInvoice)
+router.post('/einvoice/print', ecpayController.printInvoice)
+
+// router.get('/logisticts/store/list/params', ecpayController.getStoreListParams)
 
 module.exports = router

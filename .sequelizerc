@@ -1,9 +1,11 @@
 const path = require('path')
 
+const dbEnv = process.env.MYSQL_DB === 'admin' ? '/admin' : ''
+
 module.exports = {
   // config: path.resolve('config', 'config.json'),
   config: path.resolve('config', 'mysql', 'index.js'),
-  'models-path': path.resolve('models'),
-  'seeders-path': path.resolve('seeders'),
-  'migrations-path': path.resolve('migrations')
+  'models-path': path.resolve(`models${dbEnv}`),
+  'seeders-path': path.resolve(`seeders${dbEnv}`),
+  'migrations-path': path.resolve(`migrations${dbEnv}`)
 }

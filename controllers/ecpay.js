@@ -1,24 +1,22 @@
 // 引用 Models
 const { Store } = require('../models')
+const { InvoiceWord } = require('../models/admin')
 // 引用異步錯誤處理中間件
 const { asyncError } = require('../middlewares')
 // 自訂錯誤訊息模組
 const CustomError = require('../errors/CustomError')
 // 引用 網址 模組
-const { frontUrl } = require('../utils')
+const { encrypt, frontUrl, urlToImage } = require('../utils')
 // 綠界科技參數
 const ecpay = require('../ecpay')
-// 引用 axios
-const axios = require('axios')
-const encrypt = require('../utils/encrypt')
 
 class EcpayController {
-  payment = asyncError(async (req, res, next) => {
+  paymentParams = asyncError(async (req, res, next) => {
     const { orderId, TotalAmount, ItemName } = req.query
 
-    const ecPayParams = ecpay.payment(orderId, { TotalAmount, ItemName })
+    const ecPayParams = ecpay.AioCheckOutCredit(orderId, { TotalAmount, ItemName })
 
-    res.status(200).json({ message: '前往綠界支付成功', ecPayParams })
+    res.status(200).json({ message: '生成(綠界支付)參數成功', ecPayParams })
   })
 
   paymentResult = asyncError(async (req, res, next) => {
@@ -47,20 +45,20 @@ class EcpayController {
     return res.status(200).send('1|OK')
   })
 
-  getStoreList = asyncError(async (req, res, next) => {
-    const { CvsType } = req.query
+  // getStoreListParams = asyncError(async (req, res, next) => {
+  //   const { CvsType } = req.query
 
-    const ecPayParams = ecpay.storeList(CvsType)
+  //   const ecPayParams = ecpay.GetStoreList(CvsType)
 
-    res.status(200).json({ message: '取得綠界門市清單成功', ecPayParams })
-  })
+  //   res.status(200).json({ message: '生成(綠界門市清單)參數成功', ecPayParams })
+  // })
 
-  getStore = asyncError(async (req, res, next) => {
+  getStoreParams = asyncError(async (req, res, next) => {
     const { userId, LogisticsSubType, lang } = req.query
 
-    const ecPayParams = ecpay.expressMap(userId, LogisticsSubType, lang)
+    const ecPayParams = ecpay.ExpressMap(userId, LogisticsSubType, lang)
 
-    res.status(200).json({ message: '選取綠界門市成功 (電子地圖)', ecPayParams })
+    res.status(200).json({ message: '生成(綠界電子地圖)參數成功', ecPayParams })
   })
 
   getStoreResult = asyncError(async (req, res, next) => {
@@ -76,9 +74,7 @@ class EcpayController {
       ExtraData
     } = req.body
 
-    console.log(req.body)
-
-    const lang = ExtraData
+    const path = ExtraData
     const extractedUserId = MerchantTradeNo.split('-')[0]
     const existingStores = await Store.findAll({ where: { userId: extractedUserId } })
     const isDefault = existingStores.length === 0
@@ -98,142 +94,171 @@ class EcpayController {
     })
 
     if (!created) {
-      console.log(`Store with ID ${CVSStoreID} already exists for user ${extractedUserId}.`)
+      console.log(`ID: ${extractedUserId} 用戶已選取 ID: ${CVSStoreID} 門市 `)
     } else {
-      console.log(`New store created for user ${extractedUserId}.`)
+      console.log(`ID: ${extractedUserId} 用戶選取新門市`)
     }
 
-    return res.status(200).redirect(`${frontUrl}/${lang}/profile/address?success=true`)
+    // s=t (success=true)
+    return res.status(200).redirect(`${frontUrl}${path}?s=t`)
   })
 
-  getInvoiceType = asyncError(async (req, res, next) => {
-    const InvoiceYear = '113'
-    const payload = ecpay.getGovInvoiceWordSetting(InvoiceYear)
+  getGovWordSetting = asyncError(async (req, res, next) => {
+    const { InvoiceYear } = req.body
 
-    try {
-      const response = await axios.post(
-        `${process.env.ECPAY_ENVOICE_API}/B2CInvoice/GetGovInvoiceWordSetting`,
-        payload
-      )
+    const data = { InvoiceYear }
 
-      const data = encrypt.decodeAes(response.data.Data, process.env.ECPAY_ENVOICE_HASH_KEY, process.env.ECPAY_ENVOICE_HASH_IV)
-      const parsedData = JSON.parse(data)
+    const result = await ecpay.GetGovInvoiceWordSetting(data)
 
-      res.status(200).json({ message: '取得財政部配號結果成功', data: parsedData })
-    } catch (error) {
-      console.error('ECPay API Error:', error.message)
-      res
-        .status(500)
-        .json({ message: 'ECPay API Error (getGovInvoiceWordSetting)', error: error.message })
+    const RtnCode = result.RtnCode
+    const RtnMsg = result.RtnMsg
+
+    if (RtnCode === 1) {
+      const InvoiceInfo = result.InvoiceInfo
+
+      const set = new Set()
+
+      const uniqueInvoiceInfo = InvoiceInfo.filter((item) => {
+        if (item.InvType === '07') {
+          const uniqueKey = `${item.InvoiceTerm}-${item.InvoiceHeader}`
+          if (set.has(uniqueKey)) {
+            return false
+          } else {
+            set.add(uniqueKey)
+            return true
+          }
+        }
+      })
+
+      // await InvoiceWord.destroy({ where: {}, truncate: true })
+
+      const existingRecord = await InvoiceWord.findOne({ where: { invoiceYear: InvoiceYear } })
+
+      if (!existingRecord) {
+        console.log('財政部配號結果儲存成功')
+        await Promise.all(
+          uniqueInvoiceInfo.map(async (data) => {
+            return InvoiceWord.create({
+              invoiceTerm: data.InvoiceTerm,
+              invoiceHeader: data.InvoiceHeader,
+              invoiceYear: InvoiceYear
+            })
+          })
+        )
+      }
     }
+
+    res.status(200).json({ message: RtnCode === 1 ? '取得財政部配號結果成功' : RtnMsg, result })
   })
 
-  addInvoiceType = asyncError(async (req, res, next) => {
-    const payload = ecpay.AddInvoiceWordSetting()
+  addWordSetting = asyncError(async (req, res, next) => {
+    const { InvoiceTerm, InvoiceYear, InvoiceHeader, InvoiceStart, InvoiceEnd } = req.body
 
-    try {
-      const response = await axios.post(
-        `${process.env.ECPAY_ENVOICE_API}/B2CInvoice/AddInvoiceWordSetting`,
-        payload
-      )
-
-      const data = encrypt.decodeAes(response.data.Data, process.env.ECPAY_ENVOICE_HASH_KEY, process.env.ECPAY_ENVOICE_HASH_IV)
-      const parsedData = JSON.parse(data)
-
-      res.status(200).json({ message: '字軌與配號設定', data: parsedData })
-    } catch (error) {
-      console.error('ECPay API Error:', error.message)
-      res
-        .status(500)
-        .json({ message: 'ECPay API Error (addInvoiceWordSetting)', error: error.message })
+    const data = {
+      InvoiceTerm,
+      InvoiceYear,
+      InvType: '07',
+      InvoiceCategory: '1',
+      InvoiceHeader,
+      InvoiceStart,
+      InvoiceEnd
     }
+
+    const result = await ecpay.AddInvoiceWordSetting(data)
+
+    const RtnCode = result.RtnCode
+    const RtnMsg = result.RtnMsg
+
+    res.status(200).json({ message: RtnCode === 1 ? '字軌與配號設定成功' : RtnMsg, result })
   })
 
-  setInvoiceType = asyncError(async (req, res, next) => {
-    const trackID = '4717'
-    const payload = ecpay.SetInvoiceWordSetting(trackID)
+  setWordStatus = asyncError(async (req, res, next) => {
+    const { TrackID, InvoiceStatus } = req.body
 
-    try {
-      const response = await axios.post(
-        `${process.env.ECPAY_ENVOICE_API}/B2CInvoice/UpdateInvoiceWordStatus`,
-        payload
-      )
+    const data = { TrackID, InvoiceStatus }
 
-      const data = encrypt.decodeAes(response.data.Data, process.env.ECPAY_ENVOICE_HASH_KEY, process.env.ECPAY_ENVOICE_HASH_IV)
-      const parsedData = JSON.parse(data)
+    const result = await ecpay.UpdateInvoiceWordStatus(data)
 
-      res.status(200).json({ message: '設定字軌號碼狀態成功', data: parsedData })
-    } catch (error) {
-      console.error('ECPay API Error:', error.message)
-      res
-        .status(500)
-        .json({ message: 'ECPay API Error (setInvoiceWordSetting)', error: error.message })
-    }
+    const RtnCode = result.RtnCode
+    const RtnMsg = result.RtnMsg
+
+    res.status(200).json({ message: RtnCode === 1 ? '設定字軌號碼狀態成功' : RtnMsg, result })
   })
 
-  getInvoice = asyncError(async (req, res, next) => {
-    const InvoiceYear = '113'
-    const payload = ecpay.getInvoiceWordSetting(InvoiceYear)
+  getWordSetting = asyncError(async (req, res, next) => {
+    const { InvoiceYear, InvoiceTerm, UseStatus, InvoiceHeader } = req.body
 
-    try {
-      const response = await axios.post(
-        `${process.env.ECPAY_ENVOICE_API}/B2CInvoice/GetInvoiceWordSetting`,
-        payload
-      )
-
-      const data = encrypt.decodeAes(response.data.Data, process.env.ECPAY_ENVOICE_HASH_KEY, process.env.ECPAY_ENVOICE_HASH_IV)
-      const parsedData = JSON.parse(data)
-
-      res.status(200).json({ message: '查詢字軌成功', data: parsedData })
-    } catch (error) {
-      console.error('ECPay API Error:', error.message)
-      res
-        .status(500)
-        .json({ message: 'ECPay API Error (getInvoiceWordSetting)', error: error.message })
+    const data = {
+      InvoiceYear,
+      InvoiceTerm,
+      UseStatus,
+      InvoiceCategory: '1',
+      InvType: '07',
+      InvoiceHeader
     }
+
+    const result = await ecpay.GetInvoiceWordSetting(data)
+
+    const RtnCode = result.RtnCode
+    const RtnMsg = result.RtnMsg
+
+    res.status(200).json({ message: RtnCode === 1 ? '查詢字軌成功' : RtnMsg, result })
   })
 
   issueInvoice = asyncError(async (req, res, next) => {
-    const orderId ='123'
-    const payload = ecpay.IssueInvoice(orderId)
+    const {
+      orderId,
+      CustomerName,
+      CustomerAddr,
+      CustomerPhone,
+      CustomerEmail,
+      SalesAmount,
+      Items
+    } = req.body
 
-    try {
-      const response = await axios.post(
-        `${process.env.ECPAY_ENVOICE_API}/B2CInvoice/Issue`,
-        payload
-      )
-
-      const data = encrypt.decodeAes(response.data.Data, process.env.ECPAY_ENVOICE_HASH_KEY, process.env.ECPAY_ENVOICE_HASH_IV)
-      const parsedData = JSON.parse(data)
-
-      res.status(200).json({ message: '成立發票成功', data: parsedData })
-    } catch (error) {
-      console.error('ECPay API Error:', error.message)
-      res
-        .status(500)
-        .json({ message: 'ECPay API Error (iIssue)', error: error.message })
+    const data = {
+      RelateNumber: encrypt.tradeNo(orderId),
+      CustomerName,
+      CustomerAddr,
+      CustomerPhone,
+      CustomerEmail,
+      Print: '1',
+      Donation: '0',
+      TaxType: '1',
+      SalesAmount,
+      Items,
+      InvType: '07'
     }
+
+    const result = await ecpay.IssueInvoice(data)
+
+    const RtnCode = result.RtnCode
+    const RtnMsg = result.RtnMsg
+
+    res.status(200).json({ message: RtnCode === 1 ? '成立發票成功' : RtnMsg, result })
   })
 
-  invoicePrint = asyncError(async (req, res, next) => {
-    const payload = ecpay.InvoicePrint()
+  printInvoice = asyncError(async (req, res, next) => {
+    const { InvoiceNo, InvoiceDate } = req.body
 
-    try {
-      const response = await axios.post(
-        `${process.env.ECPAY_ENVOICE_API}/B2CInvoice/InvoicePrint`,
-        payload
-      )
-
-      const data = encrypt.decodeAes(response.data.Data, process.env.ECPAY_ENVOICE_HASH_KEY, process.env.ECPAY_ENVOICE_HASH_IV)
-      const parsedData = JSON.parse(data)
-
-      res.status(200).json({ message: '成立發票成功', data: parsedData })
-    } catch (error) {
-      console.error('ECPay API Error:', error.message)
-      res
-        .status(500)
-        .json({ message: 'ECPay API Error (iIssue)', error: error.message })
+    const data = {
+      InvoiceNo,
+      InvoiceDate: InvoiceDate.split('+')[0],
+      PrintStyle: '1',
+      IsShowingDetail: '1'
     }
+
+    const result = await ecpay.InvoicePrint(data)
+
+    const RtnCode = result.RtnCode
+    const RtnMsg = result.RtnMsg
+    const InvoiceHtml = result?.InvoiceHtml
+
+    if (InvoiceHtml) {
+      urlToImage(InvoiceHtml, InvoiceNo)
+    }
+
+    res.status(200).json({ message: RtnCode === 1 ? '發票列印成功' : RtnMsg, result })
   })
 }
 

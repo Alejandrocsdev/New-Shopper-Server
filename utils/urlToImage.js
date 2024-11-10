@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer')
 const path = require('path')
 
-async function captureInvoiceImage(url, fileName) {
+async function urlToImage(url, fileName) {
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
 
@@ -25,3 +25,5 @@ async function captureInvoiceImage(url, fileName) {
 
   await browser.close()
 }
+
+module.exports = { urlToImage }
