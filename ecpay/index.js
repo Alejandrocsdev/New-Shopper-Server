@@ -58,7 +58,7 @@ class Ecpay {
     const payload = {
       MerchantID,
       RqHeader: {
-        Timestamp: Math.floor(Date.now() / 1000)
+        Timestamp: time.unixTimeStamp()
       },
       Data: encryptedData
     }
@@ -84,9 +84,13 @@ class Ecpay {
   AioCheckOutCredit(orderId, payload) {
     const { TotalAmount, ItemName } = payload
 
+    const MerchantTradeNo = encrypt.tradeNo(orderId)
+    console.log('MerchantTradeNo', MerchantTradeNo)
+
     const params = {
       MerchantID: this.merchantId('payment'),
-      MerchantTradeNo: encrypt.tradeNo(orderId),
+      // MerchantTradeNo: encrypt.tradeNo(orderId),
+      MerchantTradeNo,
       MerchantTradeDate: time.tradeDate(),
       PaymentType: 'aio',
       TotalAmount,
@@ -99,6 +103,30 @@ class Ecpay {
     }
 
     return this.macValue(params, 'payment')
+  }
+
+  async QueryTradeInfo(MerchantTradeNo) {
+    const params = {
+      MerchantID: this.merchantId('payment'),
+      MerchantTradeNo,
+      TimeStamp: time.unixTimeStamp()
+    }
+
+    const ecpayParams = this.macValue(params, 'payment')
+
+    console.log(ecpayParams)
+
+    const api = `${this.api('payment')}/Cashier/QueryTradeInfo/V5`
+
+    console.log(api)
+
+    try {
+      const response = await axios.post(api, ecpayParams)
+      console.log('data', response.data)
+      return response.data
+    } catch (error) {
+      console.log(error.message)
+    }
   }
 
   // GetStoreList(CvsType) {
@@ -156,6 +184,12 @@ class Ecpay {
 
   InvoicePrint(data) {
     const api = `${this.api('einvoice')}/B2CInvoice/InvoicePrint`
+
+    return this.einvoiceResult(data, api)
+  }
+
+  GetIssue(data) {
+    const api = `${this.api('einvoice')}/B2CInvoice/GetIssue`
 
     return this.einvoiceResult(data, api)
   }

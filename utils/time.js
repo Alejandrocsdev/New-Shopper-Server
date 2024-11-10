@@ -24,6 +24,10 @@ class Time {
       timeZone: 'Asia/Taipei'
     })
   }
+
+  unixTimeStamp() {
+    return Math.floor(Date.now() / 1000)
+  }
 }
 
 module.exports = new Time()

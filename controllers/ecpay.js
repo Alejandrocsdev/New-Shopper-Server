@@ -45,6 +45,21 @@ class EcpayController {
     return res.status(200).send('1|OK')
   })
 
+  getPaymentOrder = asyncError(async (req, res, next) => {
+    const { MerchantTradeNo } = req.body
+
+    const data = await ecpay.QueryTradeInfo(MerchantTradeNo)
+
+    let result
+
+    if (data) {
+      const params = new URLSearchParams(data)
+      result = Object.fromEntries(params.entries())
+    }
+
+    res.status(200).json({ message: '查詢訂單成功', result })
+  })
+
   // getStoreListParams = asyncError(async (req, res, next) => {
   //   const { CvsType } = req.query
 
@@ -54,9 +69,9 @@ class EcpayController {
   // })
 
   getStoreParams = asyncError(async (req, res, next) => {
-    const { userId, LogisticsSubType, lang } = req.query
+    const { userId, LogisticsSubType, path } = req.query
 
-    const ecPayParams = ecpay.ExpressMap(userId, LogisticsSubType, lang)
+    const ecPayParams = ecpay.ExpressMap(userId, LogisticsSubType, path)
 
     res.status(200).json({ message: '生成(綠界電子地圖)參數成功', ecPayParams })
   })
@@ -94,9 +109,9 @@ class EcpayController {
     })
 
     if (!created) {
-      console.log(`ID: ${extractedUserId} 用戶已選取 ID: ${CVSStoreID} 門市 `)
+      console.log(`ID:${extractedUserId}用戶 已選取 ID:${CVSStoreID}門市 `)
     } else {
-      console.log(`ID: ${extractedUserId} 用戶選取新門市`)
+      console.log(`ID:${extractedUserId}用戶 選取新門市`)
     }
 
     // s=t (success=true)
@@ -216,8 +231,11 @@ class EcpayController {
       Items
     } = req.body
 
+    const RelateNumber = encrypt.tradeNo(orderId)
+
     const data = {
-      RelateNumber: encrypt.tradeNo(orderId),
+      // RelateNumber: encrypt.tradeNo(orderId),
+      RelateNumber,
       CustomerName,
       CustomerAddr,
       CustomerPhone,
@@ -259,6 +277,21 @@ class EcpayController {
     }
 
     res.status(200).json({ message: RtnCode === 1 ? '發票列印成功' : RtnMsg, result })
+  })
+
+  getIssue = asyncError(async (req, res, next) => {
+    const { RelateNumber } = req.body
+
+    const data = {
+      RelateNumber
+    }
+
+    const result = await ecpay.GetIssue(data)
+
+    const RtnCode = result.RtnCode
+    const RtnMsg = result.RtnMsg
+
+    res.status(200).json({ message: RtnCode === 1 ? '查詢發票明細' : RtnMsg, result })
   })
 }
 
