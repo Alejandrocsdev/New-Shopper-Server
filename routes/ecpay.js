@@ -3,11 +3,11 @@ const router = Router()
 
 const { ecpayController } = require('../controllers')
 
-router.get('/payment/params', ecpayController.paymentParams)
+router.post('/payment/params', ecpayController.paymentParams)
 router.post('/payment/result', ecpayController.paymentResult) // ReturnURL
 router.post('/payment/order', ecpayController.getPaymentOrder)
 
-router.get('/logisticts/store/params', ecpayController.getStoreParams)
+router.post('/logisticts/store/params', ecpayController.getStoreParams)
 router.post('/logisticts/store/result', ecpayController.getStoreResult) // ServerReplyURL
 
 router.post('/einvoice/get-gov-word-setting', ecpayController.getGovWordSetting)

@@ -12,7 +12,11 @@ const ecpay = require('../ecpay')
 
 class EcpayController {
   paymentParams = asyncError(async (req, res, next) => {
-    const { orderId, TotalAmount, ItemName } = req.query
+    const { orderId, TotalAmount, ItemName } = req.body
+
+    if (orderId.length > 7) {
+      throw new CustomError(400, 'error.orderIdTooLong', 'orderId 不可大於7位數')
+    }
 
     const ecPayParams = ecpay.AioCheckOutCredit(orderId, { TotalAmount, ItemName })
 
@@ -69,7 +73,7 @@ class EcpayController {
   // })
 
   getStoreParams = asyncError(async (req, res, next) => {
-    const { userId, LogisticsSubType, path } = req.query
+    const { userId, LogisticsSubType, path } = req.body
 
     const ecPayParams = ecpay.ExpressMap(userId, LogisticsSubType, path)
 
