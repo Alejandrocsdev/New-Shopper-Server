@@ -25,7 +25,7 @@ class Validator {
     for (const [route, ruleKeys] of Object.entries(rules)) {
       const schemaObject = {}
 
-      ruleKeys.forEach((ruleKey) => {
+      ruleKeys.forEach(ruleKey => {
         // schemaObject.phone = this.schemaParts.phone
         schemaObject[ruleKey] = this.schemaParts[ruleKey]
       })

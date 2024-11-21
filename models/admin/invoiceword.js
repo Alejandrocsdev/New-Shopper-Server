@@ -2,7 +2,7 @@
 const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class InvoiceWord extends Model {
-    static associate(models) {}
+    // static associate(models) {}
   }
   InvoiceWord.init(
     {

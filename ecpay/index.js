@@ -49,11 +49,7 @@ class Ecpay {
 
     const requestData = JSON.stringify(data)
 
-    const encryptedData = encrypt.aes(
-      requestData,
-      this.hashKey('einvoice'),
-      this.hashIV('einvoice')
-    )
+    const encryptedData = encrypt.aes(requestData, this.hashKey('einvoice'), this.hashIV('einvoice'))
 
     const payload = {
       MerchantID,

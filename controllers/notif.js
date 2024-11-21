@@ -23,7 +23,7 @@ class NotifyController extends Validator {
     super(rules)
   }
 
-  resetPwdPhone = asyncError(async (req, res, next) => {
+  resetPwdPhone = asyncError(async (req, res) => {
     // 驗證請求主體
     this.validateBody(req.body, 'resetPwdPhone')
     const { phone } = req.body
@@ -31,11 +31,11 @@ class NotifyController extends Validator {
     // 取得用戶資料
     const user = await User.findOne({ where: { phone } })
 
-      // 如電話不存在,無法重設密碼
-      if (!user) throw new CustomError(400, 'error.unsignedPhone', '未註冊電話號碼')
+    // 如電話不存在,無法重設密碼
+    if (!user) throw new CustomError(400, 'error.unsignedPhone', '未註冊電話號碼')
 
     // 簡訊內容資料
-    const username = user.username
+    // const username = user.username
     const date = time.notifyDate()
 
     // 發送簡訊
@@ -44,7 +44,7 @@ class NotifyController extends Validator {
     res.status(200).json({ message: `密碼變更通知寄出成功 (${smsType})` })
   })
 
-  resetPwdEmail = asyncError(async (req, res, next) => {
+  resetPwdEmail = asyncError(async (req, res) => {
     // 驗證請求主體
     this.validateBody(req.body, 'resetPwdEmail')
     const { email } = req.body

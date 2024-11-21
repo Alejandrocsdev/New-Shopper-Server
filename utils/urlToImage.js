@@ -18,7 +18,7 @@ async function urlToImage(url, fileName) {
   // public
   const targetPath = path.resolve(__dirname, `../storage/local/images/invoice/${fileName}.png`)
 
-  const screenshot = await page.screenshot({
+  await page.screenshot({
     path: targetPath,
     clip: { x, y, width, height }
   })

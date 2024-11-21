@@ -1,11 +1,7 @@
 'use strict'
 
-/** @type {import('sequelize-cli').Migration} */
-
-const fs = require('fs')
-
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     // 出處:
     // https://fakestoreapi.com
     // https://www.sanjing3c.com.tw
@@ -21,7 +17,7 @@ module.exports = {
 
     await queryInterface.bulkInsert('images', data)
   },
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.bulkDelete('images', null)
   }
 }

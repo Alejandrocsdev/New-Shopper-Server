@@ -90,7 +90,16 @@ module.exports = (sequelize, DataTypes) => {
           {
             model: sequelize.models.Store,
             as: 'stores',
-            attributes: ['id', 'userId', 'cvsStoreId', 'logisticsSubType', 'cvsStoreName', 'cvsAddress', 'cvsTelephone', 'isDefault']
+            attributes: [
+              'id',
+              'userId',
+              'cvsStoreId',
+              'logisticsSubType',
+              'cvsStoreName',
+              'cvsAddress',
+              'cvsTelephone',
+              'isDefault'
+            ]
           },
           {
             model: sequelize.models.Product,

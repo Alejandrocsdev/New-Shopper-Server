@@ -1,7 +1,5 @@
 'use strict'
 
-/** @type {import('sequelize-cli').Migration} */
-
 const userRolesData = [
   { user_id: 1, role_id: 1 },
   { user_id: 2, role_id: 1 },
@@ -19,11 +17,11 @@ const userRolesData = [
 ]
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     await queryInterface.bulkInsert('user_roles', userRolesData)
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.bulkDelete('user_roles', null)
   }
 }

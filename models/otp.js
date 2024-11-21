@@ -2,7 +2,7 @@
 const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class Otp extends Model {
-    static associate(models) {}
+    // static associate(models) {}
   }
   Otp.init(
     {

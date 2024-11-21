@@ -23,7 +23,7 @@ class UserController extends Validator {
     super(rules)
   }
 
-  findUserByInfo = asyncError(async (req, res, next) => {
+  findUserByInfo = asyncError(async (req, res) => {
     const { userInfo } = req.params
 
     const infoType = userInfo.split(':')[0] // phone || email
@@ -39,7 +39,7 @@ class UserController extends Validator {
     res.status(200).json({ message: user ? '資料已經註冊' : '資料尚未註冊', user: userData })
   })
 
-  putPwdByInfo = asyncError(async (req, res, next) => {
+  putPwdByInfo = asyncError(async (req, res) => {
     // 驗證請求主體
     this.validateBody(req.body, 'putPwdByInfo')
     const { password } = req.body
@@ -54,7 +54,7 @@ class UserController extends Validator {
     res.status(200).json({ message: '用戶密碼更新成功' })
   })
 
-  putUser = asyncError(async (req, res, next) => {
+  putUser = asyncError(async (req, res) => {
     // 驗證請求主體
     this.validateBody(req.body, 'putUser')
     const { username, password, email, phone } = req.body
@@ -65,8 +65,7 @@ class UserController extends Validator {
       updateData.username = username
       updateData.usernameModified = true
     }
-    if (password !== null && password !== undefined)
-      updateData.password = await encrypt.hash(password)
+    if (password !== null && password !== undefined) updateData.password = await encrypt.hash(password)
     if (email !== null && email !== undefined) updateData.email = email
     if (phone !== null && phone !== undefined) updateData.phone = phone
 
@@ -83,7 +82,7 @@ class UserController extends Validator {
     res.status(200).json({ message: '用戶資料更新成功', user: updatedUser })
   })
 
-  putUserImage = asyncError(async (req, res, next) => {
+  putUserImage = asyncError(async (req, res) => {
     const { user } = req
 
     if (!user) throw new CustomError(401, 'error.signInAgain', '用戶授權失敗')
@@ -112,7 +111,7 @@ class UserController extends Validator {
     res.status(200).json({ message: '用戶頭像更新成功', link })
   })
 
-  postUserRole = asyncError(async (req, res, next) => {
+  postUserRole = asyncError(async (req, res) => {
     const { rawUser } = req
 
     if (!rawUser) throw new CustomError(401, 'error.signInAgain', '用戶授權失敗')
@@ -134,7 +133,7 @@ class UserController extends Validator {
     res.status(200).json({ message: '新增用戶角色', roles: rawUser.roles })
   })
 
-  postUserCart = asyncError(async (req, res, next) => {
+  postUserCart = asyncError(async (req, res) => {
     const { user } = req
     if (!user) throw new CustomError(401, 'error.signInAgain', '用戶授權失敗')
 
@@ -144,6 +143,8 @@ class UserController extends Validator {
     const [cart, cartCreated] = await Cart.findOrCreate({
       where: { userId: user.id }
     })
+
+    console.log('cartCreated', cartCreated)
 
     const [cartItem, itemCreated] = await CartItem.findOrCreate({
       where: { cartId: cart.id, productId },
@@ -182,7 +183,7 @@ class UserController extends Validator {
     res.status(200).json({ message: '商品加入購物車成功', cartItems })
   })
 
-  putUserCart = asyncError(async (req, res, next) => {
+  putUserCart = asyncError(async (req, res) => {
     const { user } = req
     if (!user) throw new CustomError(401, 'error.signInAgain', '用戶授權失敗')
 
@@ -226,7 +227,7 @@ class UserController extends Validator {
     res.status(200).json({ message: '購物車商品數量更新成功', cartItems: updatedCartItems })
   })
 
-  deleteUserCart = asyncError(async (req, res, next) => {
+  deleteUserCart = asyncError(async (req, res) => {
     const { user } = req
     if (!user) throw new CustomError(401, 'error.signInAgain', '用戶授權失敗')
 

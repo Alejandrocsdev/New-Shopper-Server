@@ -14,7 +14,8 @@ class Encrypt {
       const salt = await bcrypt.genSaltSync(10)
       const hashedData = await bcrypt.hash(data, salt)
       return hashedData
-    } catch (err) {
+    } catch (error) {
+      console.error(error)
       throw new CustomError(500, 'encrypt.defaultError', '雜湊失敗 (Encrypt)')
     }
   }
@@ -24,7 +25,8 @@ class Encrypt {
     try {
       const isMatch = await bcrypt.compare(data, hashedData)
       return isMatch
-    } catch (err) {
+    } catch (error) {
+      console.error(error)
       throw new CustomError(500, 'encrypt.defaultError', '雜湊比對失敗 (Encrypt)')
     }
   }
@@ -34,7 +36,8 @@ class Encrypt {
     try {
       const secret = crypto.randomBytes(32).toString('hex')
       return secret
-    } catch (err) {
+    } catch (error) {
+      console.error(error)
       throw new CustomError(500, 'encrypt.defaultError', '密鑰生成失敗 (Encrypt)')
     }
   }
@@ -44,7 +47,8 @@ class Encrypt {
     try {
       const code = crypto.randomInt(100000, 1000000)
       return String(code)
-    } catch (err) {
+    } catch (error) {
+      console.error(error)
       throw new CustomError(500, 'encrypt.defaultError', '生成OTP失敗 (Encrypt.otp)')
     }
   }
@@ -65,7 +69,8 @@ class Encrypt {
         result += charSet[randomIndex]
       }
       return result
-    } catch (err) {
+    } catch (error) {
+      console.error(error)
       throw new CustomError(500, 'error.defaultError', '隨機帳號生成失敗 (Encrypt)')
     }
   }
@@ -74,7 +79,7 @@ class Encrypt {
   async uniqueUsername(model) {
     try {
       // 檢查帳號是否存在函式
-      const isExist = async (username) => {
+      const isExist = async username => {
         const user = await model.findOne({ where: { username } })
         return !!user
       }
@@ -91,7 +96,8 @@ class Encrypt {
       }
 
       return username
-    } catch (err) {
+    } catch (error) {
+      console.error(error)
       throw new CustomError(500, 'error.defaultError', '生成唯一帳號失敗 (Encrypt)')
     }
   }
@@ -102,17 +108,19 @@ class Encrypt {
       const token = jwt.sign({ id: Number(id) }, process.env.EMAIL_SECRET, { expiresIn: '15m' })
       return token
     } catch (error) {
+      console.error(error)
       throw new CustomError(500, 'error.defaultError', '生成email憑證失敗 (Encrypt)')
     }
   }
 
   // Access JWT
   signAccessToken(id, rolesData) {
-    const roles = rolesData.map((role) => role.name)
+    const roles = rolesData.map(role => role.name)
     try {
       const token = jwt.sign({ id: Number(id), roles }, process.env.AT_SECRET, { expiresIn: '15m' })
       return token
     } catch (error) {
+      console.error(error)
       throw new CustomError(500, 'error.defaultError', '生成at憑證失敗 (Encrypt)')
     }
   }
@@ -123,6 +131,7 @@ class Encrypt {
       const token = jwt.sign({ id: Number(id) }, process.env.RT_SECRET, { expiresIn: '7d' })
       return token
     } catch (error) {
+      console.error(error)
       throw new CustomError(500, 'error.defaultError', '生成rt憑證失敗 (Encrypt)')
     }
   }

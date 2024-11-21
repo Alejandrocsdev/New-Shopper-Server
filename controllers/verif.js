@@ -24,7 +24,7 @@ class VerifController extends Validator {
     super(rules)
   }
 
-  sendOtp = asyncError(async (req, res, next) => {
+  sendOtp = asyncError(async (req, res) => {
     // 驗證請求主體
     this.validateBody(req.body, 'sendOtp')
     // isReset: 是否為重設密碼
@@ -50,9 +50,7 @@ class VerifController extends Validator {
     // 查詢OTP紀錄, 不存在則新增
     const [otpRecord, created] = await Otp.findOrCreate({
       where: phone ? { phone } : { email },
-      defaults: phone
-        ? { phone, otp: hashedOtp, expireTime }
-        : { email, otp: hashedOtp, expireTime }
+      defaults: phone ? { phone, otp: hashedOtp, expireTime } : { email, otp: hashedOtp, expireTime }
     })
 
     // 如果 OTP 記錄已存在，更新 OTP 和 expireTime
@@ -69,7 +67,7 @@ class VerifController extends Validator {
     }
   })
 
-  verifyOtp = asyncError(async (req, res, next) => {
+  verifyOtp = asyncError(async (req, res) => {
     // 驗證請求主體
     this.validateBody(req.body, 'verifyOtp')
     const { phone, email, otp } = req.body
@@ -119,7 +117,7 @@ class VerifController extends Validator {
     }
   })
 
-  sendLink = asyncError(async (req, res, next) => {
+  sendLink = asyncError(async (req, res) => {
     // 驗證請求主體
     this.validateBody(req.body, 'sendLink')
     const { email, lang } = req.body
@@ -141,7 +139,7 @@ class VerifController extends Validator {
     res.status(200).json({ message: '信箱OTP發送成功 (gmail)' })
   })
 
-  verifyLink = asyncError(async (req, res, next) => {
+  verifyLink = asyncError(async (req, res) => {
     const { token, lang } = req.query
 
     // 導向前端連結

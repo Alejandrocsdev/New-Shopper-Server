@@ -38,15 +38,15 @@ const loadTemplate = (templateName, replacements) => {
 
 // 郵件選項
 const emailOptions = {
-  verify: (data) => ({
+  verify: data => ({
     ...loadTemplate('verify', { username: data.username, link: data.link }),
     subject: '重設您的瞎皮爾購物密碼'
   }),
-  notify: (data) => ({
+  notify: data => ({
     ...loadTemplate('notify', { username: data.username, date: data.date }),
     subject: '您的瞎皮爾購物密碼已經變更'
   }),
-  otp: (data) => ({
+  otp: data => ({
     ...loadTemplate('otp', { otp: data.otp }),
     subject: '您的瞎皮爾驗證碼'
   })
@@ -70,7 +70,8 @@ async function sendMail(data, type) {
   try {
     const mailOptions = emailOptions[type](data)
     await transporter.sendMail({ from: user, to: data.email, ...mailOptions })
-  } catch (err) {
+  } catch (error) {
+    console.error(error)
     throw new CustomError(500, 'error.emailSendFail', '郵件發送失敗 (gmail)')
   }
 }

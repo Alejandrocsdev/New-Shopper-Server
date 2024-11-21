@@ -10,7 +10,7 @@ const path = require('path')
 //   console.log('Directory created:', fs.existsSync('storage/cloud/cloudinary/temp/'))
 // }
 
-const storage = (storagePath) => {
+const storage = storagePath => {
   return multer.diskStorage({
     destination: (req, file, cb) => cb(null, storagePath),
     filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
@@ -29,13 +29,10 @@ function upload(type) {
   switch (true) {
     case type === 'local':
       return localUpload.single('image')
-      break
     case type === 'cloudinary':
       return memoryUpload.single('image')
-      break
     case type === 'imgur':
       return directUpload.single('image')
-      break
   }
 }
 

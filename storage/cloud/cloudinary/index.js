@@ -1,8 +1,5 @@
 // 引用 cloudinary SDK
 const cloudinary = require('cloudinary').v2
-// 引用 node.js 內建模組
-const fs = require('fs')
-const path = require('path')
 // 引用客製化錯誤訊息模組
 const CustomError = require('../../../errors/CustomError')
 

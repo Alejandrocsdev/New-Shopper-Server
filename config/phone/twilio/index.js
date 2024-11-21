@@ -29,7 +29,8 @@ async function twilio(data, type) {
 
     // 發送簡訊
     await client.messages.create(options(data, type))
-  } catch (err) {
+  } catch (error) {
+    console.error(error)
     throw new CustomError(500, 'error.twilioOtpSendFail', '簡訊OTP發送失敗 (Twilio)')
   }
 }

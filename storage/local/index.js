@@ -38,7 +38,7 @@ class Local {
     if (deleteData === 'fb' || deleteData === 'gm') return
     try {
       const filePath = path.join(__dirname, '..', '..', 'storage', 'local', 'images', fileName)
-      fs.unlink(filePath, (err) => {
+      fs.unlink(filePath, err => {
         if (err) {
           console.log(err.message)
           throw new CustomError(500, 'error.removeTempImageFail', '移除圖檔失敗 (local)')

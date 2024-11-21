@@ -1,7 +1,7 @@
 // 引用 Passport-Local 模組
 const { Strategy } = require('passport-local')
 // 引用 Models
-const { User, Image } = require('../../models')
+const { User } = require('../../models')
 // 引用Sequelize的Operator
 const { Op } = require('sequelize')
 // 引用加密模組

@@ -11,7 +11,7 @@ const { encrypt, frontUrl, urlToImage } = require('../utils')
 const ecpay = require('../ecpay')
 
 class EcpayController {
-  paymentParams = asyncError(async (req, res, next) => {
+  paymentParams = asyncError(async (req, res) => {
     const { orderId, TotalAmount, ItemName } = req.body
 
     if (orderId.length > 7) {
@@ -23,33 +23,33 @@ class EcpayController {
     res.status(200).json({ message: '生成(綠界支付)參數成功', ecPayParams })
   })
 
-  paymentResult = asyncError(async (req, res, next) => {
-    const {
-      CustomField1,
-      CustomField2,
-      CustomField3,
-      CustomField4,
-      MerchantID,
-      MerchantTradeNo,
-      PaymentDate,
-      PaymentType,
-      PaymentTypeChargeFee,
-      RtnCode,
-      RtnMsg,
-      SimulatePaid,
-      StoreID,
-      TradeAmt,
-      TradeDate,
-      TradeNo,
-      CheckMacValue
-    } = req.body
+  paymentResult = asyncError(async (req, res) => {
+    // const {
+    //   CustomField1,
+    //   CustomField2,
+    //   CustomField3,
+    //   CustomField4,
+    //   MerchantID,
+    //   MerchantTradeNo,
+    //   PaymentDate,
+    //   PaymentType,
+    //   PaymentTypeChargeFee,
+    //   RtnCode,
+    //   RtnMsg,
+    //   SimulatePaid,
+    //   StoreID,
+    //   TradeAmt,
+    //   TradeDate,
+    //   TradeNo,
+    //   CheckMacValue
+    // } = req.body
 
     console.log(req.body)
 
     return res.status(200).send('1|OK')
   })
 
-  getPaymentOrder = asyncError(async (req, res, next) => {
+  getPaymentOrder = asyncError(async (req, res) => {
     const { MerchantTradeNo } = req.body
 
     const data = await ecpay.QueryTradeInfo(MerchantTradeNo)
@@ -64,7 +64,7 @@ class EcpayController {
     res.status(200).json({ message: '查詢訂單成功', result })
   })
 
-  // getStoreListParams = asyncError(async (req, res, next) => {
+  // getStoreListParams = asyncError(async (req, res) => {
   //   const { CvsType } = req.query
 
   //   const ecPayParams = ecpay.GetStoreList(CvsType)
@@ -72,7 +72,7 @@ class EcpayController {
   //   res.status(200).json({ message: '生成(綠界門市清單)參數成功', ecPayParams })
   // })
 
-  getStoreParams = asyncError(async (req, res, next) => {
+  getStoreParams = asyncError(async (req, res) => {
     const { userId, LogisticsSubType, path } = req.body
 
     const ecPayParams = ecpay.ExpressMap(userId, LogisticsSubType, path)
@@ -80,16 +80,16 @@ class EcpayController {
     res.status(200).json({ message: '生成(綠界電子地圖)參數成功', ecPayParams })
   })
 
-  getStoreResult = asyncError(async (req, res, next) => {
+  getStoreResult = asyncError(async (req, res) => {
     const {
-      MerchantID,
+      // MerchantID,
       MerchantTradeNo,
       LogisticsSubType,
       CVSStoreID,
       CVSStoreName,
       CVSAddress,
       CVSTelephone,
-      CVSOutSide,
+      // CVSOutSide,
       ExtraData
     } = req.body
 
@@ -112,6 +112,8 @@ class EcpayController {
       }
     })
 
+    console.log('store', store)
+
     if (!created) {
       console.log(`ID:${extractedUserId}用戶 已選取 ID:${CVSStoreID}門市 `)
     } else {
@@ -122,7 +124,7 @@ class EcpayController {
     return res.status(200).redirect(`${frontUrl}${path}?s=t`)
   })
 
-  getGovWordSetting = asyncError(async (req, res, next) => {
+  getGovWordSetting = asyncError(async (req, res) => {
     const { InvoiceYear } = req.body
 
     const data = { InvoiceYear }
@@ -137,7 +139,7 @@ class EcpayController {
 
       const set = new Set()
 
-      const uniqueInvoiceInfo = InvoiceInfo.filter((item) => {
+      const uniqueInvoiceInfo = InvoiceInfo.filter(item => {
         if (item.InvType === '07') {
           const uniqueKey = `${item.InvoiceTerm}-${item.InvoiceHeader}`
           if (set.has(uniqueKey)) {
@@ -156,7 +158,7 @@ class EcpayController {
       if (!existingRecord) {
         console.log('財政部配號結果儲存成功')
         await Promise.all(
-          uniqueInvoiceInfo.map(async (data) => {
+          uniqueInvoiceInfo.map(async data => {
             return InvoiceWord.create({
               invoiceTerm: data.InvoiceTerm,
               invoiceHeader: data.InvoiceHeader,
@@ -170,7 +172,7 @@ class EcpayController {
     res.status(200).json({ message: RtnCode === 1 ? '取得財政部配號結果成功' : RtnMsg, result })
   })
 
-  addWordSetting = asyncError(async (req, res, next) => {
+  addWordSetting = asyncError(async (req, res) => {
     const { InvoiceTerm, InvoiceYear, InvoiceHeader, InvoiceStart, InvoiceEnd } = req.body
 
     const data = {
@@ -191,7 +193,7 @@ class EcpayController {
     res.status(200).json({ message: RtnCode === 1 ? '字軌與配號設定成功' : RtnMsg, result })
   })
 
-  setWordStatus = asyncError(async (req, res, next) => {
+  setWordStatus = asyncError(async (req, res) => {
     const { TrackID, InvoiceStatus } = req.body
 
     const data = { TrackID, InvoiceStatus }
@@ -204,7 +206,7 @@ class EcpayController {
     res.status(200).json({ message: RtnCode === 1 ? '設定字軌號碼狀態成功' : RtnMsg, result })
   })
 
-  getWordSetting = asyncError(async (req, res, next) => {
+  getWordSetting = asyncError(async (req, res) => {
     const { InvoiceYear, InvoiceTerm, UseStatus, InvoiceHeader } = req.body
 
     const data = {
@@ -224,16 +226,8 @@ class EcpayController {
     res.status(200).json({ message: RtnCode === 1 ? '查詢字軌成功' : RtnMsg, result })
   })
 
-  issueInvoice = asyncError(async (req, res, next) => {
-    const {
-      orderId,
-      CustomerName,
-      CustomerAddr,
-      CustomerPhone,
-      CustomerEmail,
-      SalesAmount,
-      Items
-    } = req.body
+  issueInvoice = asyncError(async (req, res) => {
+    const { orderId, CustomerName, CustomerAddr, CustomerPhone, CustomerEmail, SalesAmount, Items } = req.body
 
     const RelateNumber = encrypt.tradeNo(orderId)
 
@@ -260,7 +254,7 @@ class EcpayController {
     res.status(200).json({ message: RtnCode === 1 ? '成立發票成功' : RtnMsg, result })
   })
 
-  printInvoice = asyncError(async (req, res, next) => {
+  printInvoice = asyncError(async (req, res) => {
     const { InvoiceNo, InvoiceDate } = req.body
 
     const data = {
@@ -283,7 +277,7 @@ class EcpayController {
     res.status(200).json({ message: RtnCode === 1 ? '發票列印成功' : RtnMsg, result })
   })
 
-  getIssue = asyncError(async (req, res, next) => {
+  getIssue = asyncError(async (req, res) => {
     const { RelateNumber } = req.body
 
     const data = {

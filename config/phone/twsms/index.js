@@ -18,7 +18,8 @@ async function twsms(data, type) {
 
     // 發送簡訊
     await axios.get(`${BASE_API}&mobile=${data.phone}&message=${smsMessage(data, type)}`)
-  } catch (err) {
+  } catch (error) {
+    console.error(error)
     throw new CustomError(500, 'error.twsmsOtpSendFail', '簡訊OTP發送失敗 (TwSMS)')
   }
 }

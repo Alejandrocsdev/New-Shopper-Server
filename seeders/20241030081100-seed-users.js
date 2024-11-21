@@ -1,24 +1,14 @@
 'use strict'
 
-/** @type {import('sequelize-cli').Migration} */
-
 const { encrypt } = require('../utils')
 
-const usernames = [
-  'test_buyer',
-  'test_seller',
-  'test_editor',
-  'test_viewer',
-  'seller_01',
-  'seller_02',
-  'seller_03'
-]
+const usernames = ['test_buyer', 'test_seller', 'test_editor', 'test_viewer', 'seller_01', 'seller_02', 'seller_03']
 const password = 'Test1234'
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     const hashedPassword = await encrypt.hash(password)
-    const usersData = usernames.map((username) => ({
+    const usersData = usernames.map(username => ({
       username,
       username_modified: false,
       password: hashedPassword
@@ -34,7 +24,7 @@ module.exports = {
     await queryInterface.bulkInsert('users', usersData)
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.bulkDelete('users', null)
   }
 }

@@ -5,12 +5,7 @@ const { authController } = require('../controllers')
 
 const { checkId, jwtAuth } = require('../middlewares')
 
-const {
-  pwdSignInAuth,
-  smsSignInAuth,
-  facebookSignInAuth,
-  gmailSignInAuth
-} = require('../config/passport')
+const { pwdSignInAuth, smsSignInAuth, facebookSignInAuth, gmailSignInAuth } = require('../config/passport')
 
 // 驗證參數 userId
 router.param('userId', checkId)

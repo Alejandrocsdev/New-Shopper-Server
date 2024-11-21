@@ -2,10 +2,6 @@
 require('dotenv').config()
 // 引用後端框架
 const express = require('express')
-// 引用 helmet
-// const helmet = require('helmet')
-// 引用 node.js 內建模組 crypto
-// const crypto = require('crypto')
 // 引用 ngrok
 const ngrok = require('ngrok')
 // 建立 Express 應用程式
@@ -19,10 +15,15 @@ const cors = require('cors')
 // 引用前端網域
 const { frontUrl } = require('./utils')
 // 允許來源
-const allowedOrigins = [frontUrl, process.env.ECPAY_PAYMENT_API, process.env.ECPAY_LOGISTICS_API]
+const allowedOrigins = [
+  frontUrl,
+  process.env.ECPAY_PAYMENT_API,
+  process.env.ECPAY_LOGISTICS_API,
+  process.env.ECPAY_EINVOICE_API
+]
 // 設定 CORS 的選項，允許來自特定來源的請求，並且允許攜帶憑證
 const corsOptions = {
-  origin: function (origin, callback) {
+  origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true)
     } else {
@@ -43,6 +44,8 @@ const { defaultRoute, globalError } = require('./middlewares')
 app.use(express.json())
 // Express 中間件: 解析請求主體的 URL 編碼格式資料 (使用擴展模式)
 app.use(express.urlencoded({ extended: true }))
+// Passport 初始化
+app.use(passportInit)
 // app.use((req, res, next) => {
 //   res.locals.cspNonce = crypto.randomBytes(16).toString('base64')
 //   next()
@@ -63,9 +66,7 @@ app.use(cookieParser())
 // 掛載路由中間件
 app.use('/api', routes)
 // Root Route
-app.get('/', (req, res) =>
-  res.status(200).json({ message: 'Server is up and running.', status: 'ok' })
-)
+app.get('/', (req, res) => res.status(200).json({ message: 'Server is up and running.', status: 'ok' }))
 // 掛載預設路由中間件
 app.all('*', defaultRoute)
 // 掛載全域錯誤中間件

@@ -57,10 +57,7 @@ function toWords(input) {
 // 處理第17~64W (Words)
 function tiesFunc(tie, index) {
   return modOperation232(
-    modOperation232(
-      modOperation232(sigma1(tie[index - 2]), tie[index - 7]),
-      sigma0(tie[index - 15])
-    ),
+    modOperation232(modOperation232(sigma1(tie[index - 2]), tie[index - 7]), sigma0(tie[index - 15])),
     tie[index - 16]
   )
 }
@@ -179,7 +176,7 @@ function modOperation232(str01, str02) {
 
 // 填充至512位元的長度
 function modOperation512(length) {
-  num = 448 - length - 1
+  const num = 448 - length - 1
   const zeros = num >= 0 ? num % 512 : (num % 512) + 512
   const result = '0'.repeat(zeros)
   return result
@@ -218,10 +215,7 @@ function choose(str01, str02, str03) {
 
 // 計算Majority函數
 function majority(str01, str02, str03) {
-  return xorOperation(
-    xorOperation(andOperation(str01, str02), andOperation(str01, str03)),
-    andOperation(str02, str03)
-  )
+  return xorOperation(xorOperation(andOperation(str01, str02), andOperation(str01, str03)), andOperation(str02, str03))
 }
 
 // 計算Summary0函數

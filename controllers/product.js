@@ -16,7 +16,7 @@ class ProductController extends Validator {
     super(rules)
   }
 
-  getProducts = asyncError(async (req, res, next) => {
+  getProducts = asyncError(async (req, res) => {
     const limit = parseInt(req.query.limit) || 9
     const page = parseInt(req.query.page) || 1
     const offset = (page - 1) * limit
@@ -53,7 +53,7 @@ class ProductController extends Validator {
     })
   })
 
-  getProduct = asyncError(async (req, res, next) => {
+  getProduct = asyncError(async (req, res) => {
     const { productId } = req.params
     const product = await Product.findOne({
       where: { id: productId },

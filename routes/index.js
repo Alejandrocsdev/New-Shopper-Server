@@ -1,8 +1,6 @@
 const { Router } = require('express')
 const router = Router()
 
-const { jwtAuth } = require('../middlewares')
-
 const auth = require('./auth')
 const user = require('./user')
 const verif = require('./verif')

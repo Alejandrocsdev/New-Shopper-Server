@@ -1,12 +1,12 @@
 // 引用 Models
-const { Store, User } = require('../models')
+const { Store } = require('../models')
 // 引用異步錯誤處理中間件
 const { asyncError } = require('../middlewares')
 // 自訂錯誤訊息模組
 const CustomError = require('../errors/CustomError')
 
 class StoreController {
-  deleteStore = asyncError(async (req, res, next) => {
+  deleteStore = asyncError(async (req, res) => {
     const { storeId } = req.params
 
     const store = await Store.findOne({ where: { id: storeId } })
@@ -16,13 +16,22 @@ class StoreController {
 
     const updatedStores = await Store.findAll({
       where: { userId: store.userId },
-      attributes: ['id', 'userId', 'cvsStoreId', 'logisticsSubType', 'cvsStoreName', 'cvsAddress', 'cvsTelephone', 'isDefault']
+      attributes: [
+        'id',
+        'userId',
+        'cvsStoreId',
+        'logisticsSubType',
+        'cvsStoreName',
+        'cvsAddress',
+        'cvsTelephone',
+        'isDefault'
+      ]
     })
 
     res.status(200).json({ message: '刪除門市成功', stores: updatedStores })
   })
 
-  putStoreDefault = asyncError(async (req, res, next) => {
+  putStoreDefault = asyncError(async (req, res) => {
     const { storeId } = req.params
 
     const store = await Store.findOne({ where: { id: storeId } })
@@ -33,7 +42,16 @@ class StoreController {
 
     const updatedStores = await Store.findAll({
       where: { userId: store.userId },
-      attributes: ['id', 'userId', 'cvsStoreId', 'logisticsSubType', 'cvsStoreName', 'cvsAddress', 'cvsTelephone', 'isDefault']
+      attributes: [
+        'id',
+        'userId',
+        'cvsStoreId',
+        'logisticsSubType',
+        'cvsStoreName',
+        'cvsAddress',
+        'cvsTelephone',
+        'isDefault'
+      ]
     })
 
     res.status(200).json({ message: '更新預設門市成功', stores: updatedStores })

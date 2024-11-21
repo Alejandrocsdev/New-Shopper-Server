@@ -1,6 +1,5 @@
 'use strict'
 
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('user_roles', {
@@ -22,7 +21,7 @@ module.exports = {
       },
       role_id: {
         allowNull: false,
-        type: Sequelize.INTEGER, 
+        type: Sequelize.INTEGER,
         references: {
           model: 'roles', // Matches the 'roles' table in the Role model
           key: 'id'
@@ -43,7 +42,7 @@ module.exports = {
     })
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.dropTable('user_roles')
   }
 }

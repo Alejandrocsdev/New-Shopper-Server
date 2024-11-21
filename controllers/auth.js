@@ -18,7 +18,7 @@ class AuthController extends Validator {
     super(rules)
   }
 
-  refresh = asyncError(async (req, res, next) => {
+  refresh = asyncError(async (req, res) => {
     const cookies = req.cookies
 
     if (!cookies?.jwt) throw new CustomError(401, 'error.signInAgain', '查無刷新憑證')
@@ -38,7 +38,7 @@ class AuthController extends Validator {
     res.status(200).json({ message: '存取憑證刷新成功', accessToken })
   })
 
-  autoSignIn = asyncError(async (req, res, next) => {
+  autoSignIn = asyncError(async (req, res) => {
     const { userId } = req.params
 
     const user = await User.findByPk(userId)
@@ -55,7 +55,7 @@ class AuthController extends Validator {
     res.status(200).json({ message: '自動登入成功', accessToken })
   })
 
-  signIn = asyncError(async (req, res, next) => {
+  signIn = asyncError(async (req, res) => {
     const { user } = req
 
     if (!user) throw new CustomError(401, 'error.signInFail', '登入失敗')
@@ -71,15 +71,12 @@ class AuthController extends Validator {
     res.status(200).json({ message: '登入成功', accessToken })
   })
 
-  signUp = asyncError(async (req, res, next) => {
+  signUp = asyncError(async (req, res) => {
     // 驗證請求主體
     this.validateBody(req.body, 'signUp')
     const { phone, password } = req.body
 
-    const [username, hashedPassword] = await Promise.all([
-      encrypt.uniqueUsername(User),
-      encrypt.hash(password)
-    ])
+    const [username, hashedPassword] = await Promise.all([encrypt.uniqueUsername(User), encrypt.hash(password)])
 
     const [user, buyerRole] = await Promise.all([
       User.create({ username, password: hashedPassword, phone }),
@@ -99,7 +96,7 @@ class AuthController extends Validator {
     res.status(201).json({ message: '新用戶註冊成功', user: newUser })
   })
 
-  signOut = asyncError(async (req, res, next) => {
+  signOut = asyncError(async (req, res) => {
     const cookies = req.cookies
     if (!cookies?.jwt) {
       return res.status(200).json({ message: '登出成功' })
@@ -117,13 +114,13 @@ class AuthController extends Validator {
     res.status(200).json({ message: '登出成功' })
   })
 
-  getAuthUser = asyncError(async (req, res, next) => {
+  getAuthUser = asyncError(async (req, res) => {
     const { user } = req
 
     res.status(200).json({ message: '取得用戶資料成功', user })
   })
 
-  thirdPartySign = asyncError(async (req, res, next) => {
+  thirdPartySign = asyncError(async (req, res) => {
     const { user } = req
 
     if (!user) throw new CustomError(401, 'error.signInFail', '登入失敗')
