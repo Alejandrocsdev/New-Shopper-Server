@@ -3,7 +3,7 @@ require('dotenv').config()
 // 引用後端框架
 const express = require('express')
 // 引用 ngrok
-const ngrok = require('ngrok')
+// const ngrok = require('ngrok')
 // 建立 Express 應用程式
 const app = express()
 // 伺服器端口
@@ -40,6 +40,8 @@ const { passportInit } = require('./config/passport')
 const routes = require('./routes')
 // 引用自定義中間件(預設路由/全域錯誤)
 const { defaultRoute, globalError } = require('./middlewares')
+// 處理瀏覽器自動請求的 favicon.ico，回應 204 狀態碼 (無內容)
+app.get('/favicon.ico', (req, res) => res.status(204))
 // Express 中間件: 解析請求主體的 JSON 格式資料
 app.use(express.json())
 // Express 中間件: 解析請求主體的 URL 編碼格式資料 (使用擴展模式)
@@ -74,15 +76,15 @@ app.use(globalError)
 // 監聽伺服器運行
 app.listen(port, async () => {
   console.info(`Express server running on port: ${port}`)
-  if (process.env.NODE_ENV === 'development') {
-    try {
-      global.ngrokUrl = await ngrok.connect({
-        authtoken: process.env.NGROK_AUTH_TOKEN,
-        addr: port
-      })
-      console.info(`Ngrok tunnel open at: ${global.ngrokUrl}`)
-    } catch (error) {
-      console.error('Error starting ngrok:', error)
-    }
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   try {
+  //     global.ngrokUrl = await ngrok.connect({
+  //       authtoken: process.env.NGROK_AUTH_TOKEN,
+  //       addr: port
+  //     })
+  //     console.info(`Ngrok tunnel open at: ${global.ngrokUrl}`)
+  //   } catch (error) {
+  //     console.error('Error starting ngrok:', error)
+  //   }
+  // }
 })

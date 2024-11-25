@@ -6,7 +6,7 @@
     "lint": "npx eslint .",
     "lint-fix": "npx eslint . --fix",
     "start": "node app.js",
-    "dev": "nodemon app.js",
+    "dev": "cross-env PORT=4000 nodemon app.js",
     "reset": "cross-env MYSQL_DB=shopper npx sequelize db:drop --env development && cross-env MYSQL_DB=shopper npx sequelize db:create --env development && cross-env MYSQL_DB=shopper npx sequelize db:migrate --env development && cross-env MYSQL_DB=shopper npx sequelize db:seed:all --env development",
     "admin-drop": "cross-env MYSQL_DB=admin npx sequelize db:drop --env development",
     "admin-create": "cross-env MYSQL_DB=admin npx sequelize db:create --env development",
